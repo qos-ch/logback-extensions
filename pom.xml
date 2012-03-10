@@ -69,30 +69,31 @@
         </developer>
     </developers>
 
-    <!-- <modules>
-        <module>core</module>
-        <module>extensions</module>
-    </modules> -->
+    <modules>
+        <module>json</module>
+        <module>jackson</module>
+    </modules>
 
     <properties>
 
         <!-- Redefine these properties in your $HOME/.m2/settings.xml to point to your own Maven repository (e.g. Nexus) -->
         <logback-extensions.repository.releases.url>file://${user.home}/.m2/local-releases</logback-extensions.repository.releases.url>
-        <logback-extensions.repository.snapshots.url>file://${user.home}/.m2/local-snapshotsy</logback-extensions.repository.snapshots.url>
+        <logback-extensions.repository.snapshots.url>file://${user.home}/.m2/local-snapshots</logback-extensions.repository.snapshots.url>
 
-        <!-- Standard Dependencies: -->
+        <!-- Compile Dependencies: -->
         <logback.version>1.0.1</logback.version>
+        <jackson.version>1.9.5</jackson.version>
 
         <!-- Test Dependencies: -->
-        <easymock.version>3.0</easymock.version>
-        <groovy.version>1.8.0</groovy.version>
-        <junit.version>4.8.2</junit.version>
+        <easymock.version>3.1</easymock.version>
+        <groovy.version>1.8.6</groovy.version>
+        <testng.version>6.4</testng.version>
 
     </properties>
 
     <dependencies>
 
-        <!-- Standard project-wide depencies for _all_ children modules: -->
+        <!-- Standard project-wide dependencies for _all_ children modules: -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -101,9 +102,9 @@
 
         <!-- Test Dependencies for _all_ children modules: -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -125,10 +126,40 @@
 
         <dependencies>
 
-           <!-- Pool of dependencies available to any submodule, but not included automatically.
+           <!-- Pool of dependencies available to any sub-module, but not included automatically.
                 They must be explicitly referenced in the children POMs, but _don't_ include
                 version numbers in the child POMs.  Define them here only to guarantee version
                 compatibility across children modules! -->
+
+            <!-- Logback Extensions sub-modules dependency .jars (alphabetized based on artifactId for easy scanning please!): -->
+            <dependency>
+                <groupId>ch.qos.logback.extensions</groupId>
+                <artifactId>logback-ext-jackson</artifactId>
+                <!--suppress MavenModelInspection -->
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback.extensions</groupId>
+                <artifactId>logback-ext-json-classic</artifactId>
+                <!--suppress MavenModelInspection -->
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback.extensions</groupId>
+                <artifactId>logback-ext-json-core</artifactId>
+                <!--suppress MavenModelInspection -->
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- 3rd party dependencies: -->
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${jackson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
@@ -185,6 +216,7 @@
                 <executions>
                     <execution>
                         <goals>
+                            <!--suppress MavenModelInspection -->
                             <goal>testCompile</goal>
                         </goals>
                     </execution>
@@ -220,6 +252,7 @@
                             <execution>
                                 <id>attach-api-docs</id>
                                 <goals>
+                                    <!--suppress MavenModelInspection -->
                                     <goal>jar</goal>
                                 </goals>
                             </execution>
