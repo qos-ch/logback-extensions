@@ -10,4 +10,4 @@ https://github.com/qos-ch/logback-extensions/wiki
 
 This project requires Maven 2.2.1 or later to build (3.x works as well).  Run the following to build:
 
-    > mvn install
+> mvn install
