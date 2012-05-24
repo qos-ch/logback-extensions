@@ -67,6 +67,13 @@
             <url>http://www.leshazlewood.com</url>
             <timezone>-8</timezone>
         </developer>
+        <developer>
+            <id>tony19</id>
+            <name>Tony Trinh</name>
+            <email>tony19@gmail.com</email>
+            <url>http://tony19.github.com</url>
+            <timezone>-5</timezone>
+        </developer>
     </developers>
 
     <modules>
@@ -74,6 +81,7 @@
         <module>jackson</module>
         <module>loggly</module>
         <module>spring</module>
+        <module>eclipse</module>
     </modules>
 
     <properties>
@@ -83,7 +91,7 @@
         <logback-extensions.repository.snapshots.url>file://${user.home}/.m2/local-snapshots</logback-extensions.repository.snapshots.url>
 
         <!-- Compile Dependencies: -->
-        <logback.version>1.0.1</logback.version>
+        <logback.version>1.0.3</logback.version>
         <jackson.version>1.9.5</jackson.version>
         <spring.version>3.1.1.RELEASE</spring.version>
 
