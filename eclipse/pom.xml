@@ -44,4 +44,14 @@
 			<version>4.3.0</version>
 		</dependency>
 	</dependencies>
+    
+	<pluginRepositories>
+		<pluginRepository>
+			<id>ops4j.releases</id>
+			<url>http://repository.ops4j.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>

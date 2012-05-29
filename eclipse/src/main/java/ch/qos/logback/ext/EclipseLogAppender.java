@@ -77,7 +77,6 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 		}
 
 		this.eclipseLog = Platform.getLog(bundle);
-
 		super.start();
 	}
 
@@ -94,9 +93,9 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 			return;
 		}
 
-		// Map log level to appropriate Eclipse status 
+		// Map log level to appropriate Eclipse status
 		// (one of: CANCEL, ERROR, INFO, OK, WARNING)
-		int status = Status.OK;
+		int status;
 		int lev = event.getLevel().levelInt;
 		switch (lev) {
 		case Level.WARN_INT:
@@ -107,18 +106,23 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 			status = Status.ERROR;
 			break;
 
-		default:
+		case Level.INFO_INT:
 			status = Status.INFO;
+			break;
+
+		case Level.TRACE_INT: // map to CANCEL
+			status = Status.CANCEL;
+			break;
+
+		default:
+			status = Status.OK;
 			break;
 		}
 
 		// Log the message if level allows (not off)
 		if (lev != Level.OFF_INT) {
 			String msg = this.encoder.getLayout().doLayout(event);
-
-			this.eclipseLog.log(
-					new Status(Status.INFO, this.bundleName, status, msg, null)
-			);
+			this.eclipseLog.log(new Status(status, this.bundleName, lev, msg, null));
 		}
 	}
 
