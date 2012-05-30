@@ -32,11 +32,12 @@ import ch.qos.logback.core.AppenderBase;
  * Sample logback configuration:
  * <pre>
  * &lt;configuration>
- *	&lt;appender name="eclipse" class="ch.qos.logback.classic.EclipseLogAppender">
+ *	&lt;appender name="eclipse" class="ch.qos.logback.ext.EclipseLogAppender">
  *		&lt;encoder>
  *			&lt;pattern>[%method] > %msg%n&lt;/pattern>
  *		&lt;/encoder>
  *		
+ *		&lt;!-- optional: bundle whose logger will be used for displaying messages -->
  *		&lt;bundleName>com.example.e4.helloworld&lt;/bundleName>
  *	&lt;/appender>
  *
@@ -50,9 +51,12 @@ import ch.qos.logback.core.AppenderBase;
  */
 public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 
-	private PatternLayoutEncoder encoder = null;
-	private ILog eclipseLog = null;
-	private String bundleName = null;
+	// make sure this variable matches the name value of Bundle-SymbolicName in MANIFEST.MF
+	private static final String BUNDLE_SYMBOLIC_NAME = "ch.qos.logback.ext.eclipse";
+	
+	private PatternLayoutEncoder _encoder = null;
+	private ILog _eclipseLog = null;
+	private String _bundleName = null;
 
 	/**
 	 * Checks that required parameters are set, and if everything is in order,
@@ -60,23 +64,25 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 	 */
 	@Override
 	public void start() {
-		if ((this.encoder == null) || (this.encoder.getLayout() == null)) {
+		// encoder requires layout
+		if ((_encoder == null) || (_encoder.getLayout() == null)) {
 			addError("No layout set for the appender named [" + name + "].");
 			return;
 		}
 
-		if (this.bundleName == null) {
-			addError("No bundle name set for the appender named [" + name + "].");
-			return;
+		// if no bundle name given, use our own Eclipse log instance
+		if (_bundleName == null) {
+			addInfo("Assuming name of \"" + BUNDLE_SYMBOLIC_NAME + "\" for the appender named [" + name + "].");
+			_bundleName = BUNDLE_SYMBOLIC_NAME;
 		}
 
-		Bundle bundle = Platform.getBundle(this.bundleName);
+		Bundle bundle = Platform.getBundle(_bundleName);
 		if (bundle == null) {
 			addError("Invalid bundle name for the appender named [" + name + "].");
 			return;
 		}
 
-		this.eclipseLog = Platform.getLog(bundle);
+		_eclipseLog = Platform.getLog(bundle);
 		super.start();
 	}
 
@@ -121,8 +127,8 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 
 		// Log the message if level allows (not off)
 		if (lev != Level.OFF_INT) {
-			String msg = this.encoder.getLayout().doLayout(event);
-			this.eclipseLog.log(new Status(status, this.bundleName, lev, msg, null));
+			String msg = _encoder.getLayout().doLayout(event);
+			_eclipseLog.log(new Status(status, _bundleName, lev, msg, null));
 		}
 	}
 
@@ -132,7 +138,7 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 	 * @return the pattern-layout encoder
 	 */
 	public PatternLayoutEncoder getEncoder() {
-		return this.encoder;
+		return _encoder;
 	}
 
 	/**
@@ -142,7 +148,7 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 	 *            the pattern-layout encoder
 	 */
 	public void setEncoder(PatternLayoutEncoder encoder) {
-		this.encoder = encoder;
+		_encoder = encoder;
 	}
 
 	/**
@@ -152,18 +158,20 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
 	 * @return the symbolic name of the Eclipse plugin bundle
 	 */
 	public String getBundleName() {
-		return this.bundleName;
+		return _bundleName;
 	}
 
 	/**
 	 * Sets the name of the Eclipse plugin bundle whose logger will be used for
 	 * logging messages. This must match the name from the "Bundle-SymbolicName"
-	 * property of the bundle's manifest.
+	 * property of the bundle's manifest. If start() is called without setting
+	 * this value, this Eclipse logback extension's bundle name is used as a 
+	 * default.
 	 * 
 	 * @param bundleName
 	 *            the symbolic name of the Eclipse plugin bundle
 	 */
 	public void setBundleName(String bundleName) {
-		this.bundleName = bundleName;
+		_bundleName = bundleName;
 	}
 }
