@@ -27,31 +27,37 @@
     <name>Logback Extensions :: Eclipse</name>
     <packaging>jar</packaging>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.eclipse.equinox</groupId>
-			<artifactId>org.eclipse.equinox.common</artifactId>
-			<version>3.6.0.v20100503</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jibx.config.3rdparty.org.eclipse</groupId>
-			<artifactId>org.eclipse.core.runtime</artifactId>
-			<version>3.7.0.v20110110</version>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>4.3.0</version>
-		</dependency>
-	</dependencies>
-    
-	<pluginRepositories>
-		<pluginRepository>
-			<id>ops4j.releases</id>
-			<url>http://repository.ops4j.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.common</artifactId>
+            <version>3.6.0.v20100503</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jibx.config.3rdparty.org.eclipse</groupId>
+            <artifactId>org.eclipse.core.runtime</artifactId>
+            <version>3.7.0.v20110110</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+    </dependencies>
+
+<!-- 
+     XXX: Disable until we figure out how to use the pax-construct
+     Maven plugin to create a bundle from the command-line instead
+     of from Eclipse 
+        
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ops4j.releases</id>
+            <url>http://repository.ops4j.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+-->
 </project>
