@@ -67,6 +67,13 @@
             <url>http://www.leshazlewood.com</url>
             <timezone>-8</timezone>
         </developer>
+        <developer>
+            <id>belaso</id>
+            <name>Christian Trutz</name>
+            <email>christian.trutz@belaso.de</email>
+            <url>http://www.belaso.de</url>
+            <timezone>+2</timezone>
+        </developer>
     </developers>
 
     <modules>
@@ -74,6 +81,7 @@
         <module>jackson</module>
         <module>loggly</module>
         <module>spring</module>
+        <module>mongodb</module>
     </modules>
 
     <properties>
@@ -86,6 +94,7 @@
         <logback.version>1.0.1</logback.version>
         <jackson.version>1.9.5</jackson.version>
         <spring.version>3.1.1.RELEASE</spring.version>
+        <mongo-java-driver.version>2.7.3</mongo-java-driver.version>
 
         <!-- Test Dependencies: -->
         <easymock.version>3.1</easymock.version>
@@ -195,6 +204,13 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongo-java-driver</artifactId>
+                <version>${mongo-java-driver.version}</version>
+                <scope>provided</scope>
             </dependency>
 
         </dependencies>
