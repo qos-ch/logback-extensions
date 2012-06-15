@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Ceki Gulcu, Anthony Trinh, et. al.
+ * Copyright (C) 2012, QOS.ch. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,21 +79,18 @@ public class EclipseLogAppender extends AppenderBase<ILoggingEvent> {
     public void start() {
         // encoder requires layout
         if ((_encoder == null) || (_encoder.getLayout() == null)) {
-        	System.out.println("No layout set for the appender named [" + name + "]. Encoder=" + ((_encoder==null)?"null":"notnull")); //tony
             addError("No layout set for the appender named [" + name + "].");
             return;
         }
 
         // if no bundle name given, use our own Eclipse log instance
         if (_bundleName == null) {
-            System.out.println("Assuming name of \"" + DEFAULT_BUNDLE_SYMBOLIC_NAME + "\" for the appender named [" + name + "].");//tony
             addInfo("Assuming name of \"" + DEFAULT_BUNDLE_SYMBOLIC_NAME + "\" for the appender named [" + name + "].");
             _bundleName = DEFAULT_BUNDLE_SYMBOLIC_NAME;
         }
 
         Bundle bundle = getPlatform().getBundle(_bundleName);
         if (bundle == null) {
-        	System.out.println("Invalid bundle name for the appender named [" + name + "].");//tony
             addError("Invalid bundle name for the appender named [" + name + "].");
             return;
         }
