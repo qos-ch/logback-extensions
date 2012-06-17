@@ -15,8 +15,6 @@
  */
 package ch.qos.logback.ext.mongodb;
 
-import java.net.UnknownHostException;
-
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
 import com.mongodb.BasicDBObject;
@@ -64,10 +62,8 @@ public abstract class MongoDBAppenderBase<E> extends UnsynchronizedAppenderBase<
                 db.authenticate(username, password);
             eventsCollection = db.getCollection(collection);
             super.start();
-        } catch (UnknownHostException unknownHostException) {
-            addError("Error connecting to MongoDB URI: " + uri, unknownHostException);
-        } catch (IllegalArgumentException illegalArgumentException) {
-            addError("Error connecting to MongoDB URI: " + uri, illegalArgumentException);
+        } catch (Exception exception) {
+            addError("Error connecting to MongoDB URI: " + uri, exception);
         }
     }
 

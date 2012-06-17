@@ -15,13 +15,21 @@
  */
 package ch.qos.logback.ext.mongodb;
 
-import org.testng.annotations.BeforeTest;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+import mockit.Mocked;
+import mockit.NonStrictExpectations;
+import mockit.Verifications;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 import com.mongodb.BasicDBObject;
-import static org.testng.Assert.*;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.Mongo;
 
 /**
  * @author Christian Trutz
@@ -29,17 +37,8 @@ import static org.testng.Assert.*;
  */
 public class MongoDBAppenderBaseTest {
 
-    private MongoDBAppenderBase<ILoggingEvent> appender = null;
-
-    @BeforeTest
-    public void before() {
-        appender = new MongoDBAppenderBase<ILoggingEvent>() {
-            @Override
-            protected BasicDBObject toMongoDocument(ILoggingEvent event) {
-                return null;
-            }
-        };
-    }
+    // to be tested
+    private MongoDBAppenderBase<ILoggingEvent> appender;
 
     @Test
     public void testNullURI() {
@@ -77,4 +76,130 @@ public class MongoDBAppenderBaseTest {
         assertFalse(appender.isStarted());
     }
 
+    @Test
+    public void testDatabaseAndCollectionOK() {
+        // when uri is valid and complete
+        appender.setURI("mongodb://server/database.collection");
+        appender.start();
+        // then appender should start
+        assertTrue(appender.isStarted());
+    }
+
+    @Test
+    public void testPasswordNull() {
+        // when uri does not contain password but username
+        appender.setURI("mongodb://username@server/database.collection");
+        appender.start();
+        // then appender should not start
+        assertFalse(appender.isStarted());
+    }
+
+    // TODO is empty username in MongoDB allowed?
+    @Test
+    public void testEmptyUsername() {
+        // when uri contains empty username
+        appender.setURI("mongodb://:password@server/database.collection");
+        appender.start();
+        // then appender should start
+        assertTrue(appender.isStarted());
+        new Verifications() {
+            {
+                db.authenticate("", "password".toCharArray());
+            }
+        };
+    }
+
+    // TODO is empty password in MongoDB allowed?
+    @Test
+    public void testEmptyPassword() {
+        // when uri contains empty password
+        appender.setURI("mongodb://username:@server/database.collection");
+        appender.start();
+        // then appender should start
+        assertTrue(appender.isStarted());
+        new Verifications() {
+            {
+                db.authenticate("username", "".toCharArray());
+            }
+        };
+    }
+
+    @Test
+    public void testUsernameAndPasswordOK() {
+        // when uri contains username and password
+        appender.setURI("mongodb://username:password@server/database.collection");
+        appender.start();
+        // then appender should start
+        assertTrue(appender.isStarted());
+        new Verifications() {
+            {
+                db.authenticate("username", "password".toCharArray());
+            }
+        };
+    }
+
+    @Test
+    public void testAppendOK() {
+        // when calling doAppend()
+        appender.setURI("mongodb://username:password@server/database.collection");
+        appender.start();
+        appender.doAppend(event);
+        // then invoke collection.insert(...)
+        new Verifications() {
+            {
+                collection.insert(dbObject);
+            }
+        };
+    }
+
+    @Test
+    public void testStop() {
+        // when calling stop()
+        appender.setURI("mongodb://username:password@server/database.collection");
+        appender.start();
+        appender.doAppend(event);
+        appender.stop();
+        // then close MongoDB connection and stop appender
+        new Verifications() {
+            {
+                mongo.close();
+            }
+        };
+        assertFalse(appender.isStarted());
+    }
+
+    //
+    //
+    // MOCKING
+    //
+
+    @Mocked
+    private Mongo mongo;
+    @Mocked
+    private DB db;
+    @Mocked
+    private DBCollection collection;
+    @Mocked
+    private ILoggingEvent event;
+
+    // this object will be inserted in MongoDB and represents an logging event
+    private BasicDBObject dbObject = new BasicDBObject();
+
+    @BeforeMethod
+    public void before() {
+        appender = new MongoDBAppenderBase<ILoggingEvent>() {
+            @Override
+            protected BasicDBObject toMongoDocument(ILoggingEvent event) {
+                return dbObject;
+            }
+        };
+        new NonStrictExpectations() {
+            {
+                mongo.getDB("database");
+                result = db;
+                db.getCollection("collection");
+                result = collection;
+            }
+        };
+    }
 }
