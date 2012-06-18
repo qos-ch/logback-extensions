@@ -23,6 +23,7 @@ import com.mongodb.BasicDBObject;
 
 /**
  * @author Christian Trutz
+ * @author Tomasz Nurkiewicz
  * @since 0.1
  */
 public class MongoDBLoggingEventAppender extends MongoDBAppenderBase<ILoggingEvent> {
@@ -35,6 +36,9 @@ public class MongoDBLoggingEventAppender extends MongoDBAppenderBase<ILoggingEve
         logEntry.append("thread", event.getThreadName());
         logEntry.append("timestamp", new Date(event.getTimeStamp()));
         logEntry.append("level", event.getLevel().toString());
+        if (event.getMDCPropertyMap() != null && !event.getMDCPropertyMap().isEmpty()) {
+            logEntry.append("mdc", event.getMDCPropertyMap());
+        }
         return logEntry;
     }
 
