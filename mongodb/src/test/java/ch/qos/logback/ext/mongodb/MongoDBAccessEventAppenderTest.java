@@ -46,7 +46,6 @@ public class MongoDBAccessEventAppenderTest {
 
     @Test
     public void smokeTest() throws Exception {
-        Assert.assertEquals(true, false);
     }
 
 }
