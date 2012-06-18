@@ -46,6 +46,7 @@
         <system>GitHub</system>
         <url>https://github.com/qos-ch/logback-extensions/issues</url>
     </issueManagement>
+
     <distributionManagement>
         <repository>
             <id>logback-extensions.repository.releases</id>
@@ -94,12 +95,8 @@
 
     <properties>
 
-        <!-- Redefine these properties in your $HOME/.m2/settings.xml to point to your own Maven repository (e.g. Nexus) -->
-        <logback-extensions.repository.releases.url>file://${user.home}/.m2/local-releases</logback-extensions.repository.releases.url>
-        <logback-extensions.repository.snapshots.url>file://${user.home}/.m2/local-snapshots</logback-extensions.repository.snapshots.url>
-
         <!-- Compile Dependencies: -->
-        <logback.version>1.0.1</logback.version>
+        <logback.version>1.0.6</logback.version>
         <jackson.version>1.9.5</jackson.version>
         <spring.version>3.1.1.RELEASE</spring.version>
         <mongo-java-driver.version>2.7.3</mongo-java-driver.version>
@@ -113,19 +110,6 @@
     </properties>
 
     <dependencies>
-
-        <!-- Standard project-wide dependencies for _all_ children modules: -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-access</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-
         <!-- Test Dependencies for _all_ children modules: -->
         <dependency>
             <groupId>org.testng</groupId>
@@ -158,12 +142,26 @@
 
         <dependencies>
 
+
            <!-- Pool of dependencies available to any sub-module, but not included automatically.
                 They must be explicitly referenced in the children POMs, but _don't_ include
                 version numbers in the child POMs.  Define them here only to guarantee version
                 compatibility across children modules! -->
 
             <!-- Logback Extensions sub-modules dependency .jars (alphabetized based on artifactId for easy scanning please!): -->
+          <dependency>
+               <groupId>ch.qos.logback</groupId>
+               <artifactId>logback-access</artifactId>
+               <version>${logback.version}</version>
+           </dependency>
+
+          <dependency>
+               <groupId>ch.qos.logback</groupId>
+               <artifactId>logback-classic</artifactId>
+               <version>${logback.version}</version>
+           </dependency>
+
+
             <dependency>
                 <groupId>ch.qos.logback.extensions</groupId>
                 <artifactId>logback-ext-jackson</artifactId>
