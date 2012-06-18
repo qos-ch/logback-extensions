@@ -43,7 +43,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testNullURI() {
         // when uri == null
-        appender.setURI(null);
+        appender.setUri(null);
         appender.start();
         // then appender should not start
         assertFalse(appender.isStarted());
@@ -52,7 +52,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testNotValidURI() {
         // when uri is not valid
-        appender.setURI("notvalid");
+        appender.setUri("notvalid");
         appender.start();
         // then appender should not start
         assertFalse(appender.isStarted());
@@ -61,7 +61,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testNullDatabase() {
         // when uri does not contain a database
-        appender.setURI("mongodb://server");
+        appender.setUri("mongodb://server");
         appender.start();
         // then appender should not start
         assertFalse(appender.isStarted());
@@ -70,7 +70,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testNullCollection() {
         // when uri does not contain a collection
-        appender.setURI("mongodb://server/database");
+        appender.setUri("mongodb://server/database");
         appender.start();
         // then appender should not start
         assertFalse(appender.isStarted());
@@ -79,7 +79,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testDatabaseAndCollectionOK() {
         // when uri is valid and complete
-        appender.setURI("mongodb://server/database.collection");
+        appender.setUri("mongodb://server/database.collection");
         appender.start();
         // then appender should start
         assertTrue(appender.isStarted());
@@ -88,7 +88,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testPasswordNull() {
         // when uri does not contain password but username
-        appender.setURI("mongodb://username@server/database.collection");
+        appender.setUri("mongodb://username@server/database.collection");
         appender.start();
         // then appender should not start
         assertFalse(appender.isStarted());
@@ -98,7 +98,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testEmptyUsername() {
         // when uri contains empty username
-        appender.setURI("mongodb://:password@server/database.collection");
+        appender.setUri("mongodb://:password@server/database.collection");
         appender.start();
         // then appender should start
         assertTrue(appender.isStarted());
@@ -113,7 +113,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testEmptyPassword() {
         // when uri contains empty password
-        appender.setURI("mongodb://username:@server/database.collection");
+        appender.setUri("mongodb://username:@server/database.collection");
         appender.start();
         // then appender should start
         assertTrue(appender.isStarted());
@@ -127,7 +127,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testUsernameAndPasswordOK() {
         // when uri contains username and password
-        appender.setURI("mongodb://username:password@server/database.collection");
+        appender.setUri("mongodb://username:password@server/database.collection");
         appender.start();
         // then appender should start
         assertTrue(appender.isStarted());
@@ -141,7 +141,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testAppendOK() {
         // when calling doAppend()
-        appender.setURI("mongodb://username:password@server/database.collection");
+        appender.setUri("mongodb://username:password@server/database.collection");
         appender.start();
         appender.doAppend(event);
         // then invoke collection.insert(...)
@@ -155,7 +155,7 @@ public class MongoDBAppenderBaseTest {
     @Test
     public void testStop() {
         // when calling stop()
-        appender.setURI("mongodb://username:password@server/database.collection");
+        appender.setUri("mongodb://username:password@server/database.collection");
         appender.start();
         appender.doAppend(event);
         appender.stop();

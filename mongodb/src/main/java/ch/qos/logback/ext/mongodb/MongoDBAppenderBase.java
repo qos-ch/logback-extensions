@@ -86,7 +86,7 @@ public abstract class MongoDBAppenderBase<E> extends UnsynchronizedAppenderBase<
      *            a MongoDB URI, see also
      *            http://www.mongodb.org/display/DOCS/Connections
      */
-    public void setURI(String uri) {
+    public void setUri(String uri) {
         this.uri = uri;
     }
 
