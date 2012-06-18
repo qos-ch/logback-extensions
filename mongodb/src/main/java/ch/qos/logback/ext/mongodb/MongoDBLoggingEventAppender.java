@@ -44,6 +44,9 @@ public class MongoDBLoggingEventAppender extends MongoDBAppenderBase<ILoggingEve
         if (includeCallerData) {
             logEntry.append("callerData", toDocument(event.getCallerData()));
         }
+        if (event.getArgumentArray() != null && event.getArgumentArray().length > 0) {
+            logEntry.append("arguments", event.getArgumentArray());
+        }
         return logEntry;
     }
 
