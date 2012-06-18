@@ -15,6 +15,8 @@
  */
 package ch.qos.logback.ext.mongodb;
 
+import junit.framework.Assert;
+
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -44,7 +46,7 @@ public class MongoDBAccessEventAppenderTest {
 
     @Test
     public void smokeTest() throws Exception {
-        // TODO
+        Assert.assertEquals(true, false);
     }
 
 }
