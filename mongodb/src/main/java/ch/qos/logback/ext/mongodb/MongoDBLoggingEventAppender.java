@@ -18,7 +18,7 @@ package ch.qos.logback.ext.mongodb;
 import java.util.Date;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
-
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
 /**
@@ -27,6 +27,8 @@ import com.mongodb.BasicDBObject;
  * @since 0.1
  */
 public class MongoDBLoggingEventAppender extends MongoDBAppenderBase<ILoggingEvent> {
+
+    private boolean includeCallerData;
 
     @Override
     protected BasicDBObject toMongoDocument(ILoggingEvent event) {
@@ -39,7 +41,28 @@ public class MongoDBLoggingEventAppender extends MongoDBAppenderBase<ILoggingEve
         if (event.getMDCPropertyMap() != null && !event.getMDCPropertyMap().isEmpty()) {
             logEntry.append("mdc", event.getMDCPropertyMap());
         }
+        if (includeCallerData) {
+            logEntry.append("callerData", toDocument(event.getCallerData()));
+        }
         return logEntry;
+    }
+
+    private BasicDBList toDocument(StackTraceElement[] callerData) {
+        final BasicDBList dbList = new BasicDBList();
+        for (final StackTraceElement ste : callerData) {
+            dbList.add(
+                    new BasicDBObject()
+                            .append("file", ste.getFileName())
+                            .append("class", ste.getClassName())
+                            .append("method", ste.getMethodName())
+                            .append("line", ste.getLineNumber())
+                            .append("native", ste.isNativeMethod()));
+        }
+        return dbList;
+    }
+
+    public void setIncludeCallerData(boolean includeCallerData) {
+        this.includeCallerData = includeCallerData;
     }
 
 }
