@@ -15,8 +15,6 @@
  */
 package ch.qos.logback.ext.mongodb;
 
-import junit.framework.Assert;
-
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
