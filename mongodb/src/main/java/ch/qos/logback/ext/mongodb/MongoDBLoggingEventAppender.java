@@ -18,6 +18,8 @@ package ch.qos.logback.ext.mongodb;
 import java.util.Date;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
@@ -47,6 +49,7 @@ public class MongoDBLoggingEventAppender extends MongoDBAppenderBase<ILoggingEve
         if (event.getArgumentArray() != null && event.getArgumentArray().length > 0) {
             logEntry.append("arguments", event.getArgumentArray());
         }
+        appendThrowableIfAvailable(logEntry, event);
         return logEntry;
     }
 
@@ -62,6 +65,33 @@ public class MongoDBLoggingEventAppender extends MongoDBAppenderBase<ILoggingEve
                             .append("native", ste.isNativeMethod()));
         }
         return dbList;
+    }
+
+    private void appendThrowableIfAvailable(BasicDBObject doc, ILoggingEvent event) {
+        if (event.getThrowableProxy() != null) {
+            final BasicDBObject val = toMongoDocument(event.getThrowableProxy());
+            doc.append("throwable", val);
+        }
+    }
+
+    private BasicDBObject toMongoDocument(IThrowableProxy throwable) {
+        final BasicDBObject throwableDoc = new BasicDBObject();
+        throwableDoc.append("class", throwable.getClassName());
+        throwableDoc.append("message", throwable.getMessage());
+        throwableDoc.append("stackTrace", toSteArray(throwable));
+        if (throwable.getCause() != null) {
+            throwableDoc.append("cause", toMongoDocument(throwable.getCause()));
+        }
+        return throwableDoc;
+    }
+
+    private String[] toSteArray(IThrowableProxy throwableProxy) {
+        final StackTraceElementProxy[] elementProxies = throwableProxy.getStackTraceElementProxyArray();
+        final int totalFrames = elementProxies.length - throwableProxy.getCommonFrames();
+        final String[] stackTraceElements = new String[totalFrames];
+        for (int i = 0; i < totalFrames; ++i)
+            stackTraceElements[i] = elementProxies[i].getStackTraceElement().toString();
+        return stackTraceElements;
     }
 
     public void setIncludeCallerData(boolean includeCallerData) {
