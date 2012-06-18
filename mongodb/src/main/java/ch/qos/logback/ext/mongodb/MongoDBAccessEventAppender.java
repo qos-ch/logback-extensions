@@ -26,7 +26,7 @@ import com.mongodb.BasicDBObject;
  * @author Christian Trutz
  * @since 0.1
  */
-public class MongoDBAccessAppender extends MongoDBAppenderBase<IAccessEvent> {
+public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent> {
 
     private boolean serverName = true;
     private boolean requestUri = true;

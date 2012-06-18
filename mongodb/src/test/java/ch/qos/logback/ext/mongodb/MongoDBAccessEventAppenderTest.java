@@ -26,9 +26,9 @@ import ch.qos.logback.access.spi.AccessContext;
  * @author Christian Trutz
  * @since 0.1
  */
-public class MongoDBAccessAppenderTest {
+public class MongoDBAccessEventAppenderTest {
 
-    private final MongoDBAccessAppender appender = new MongoDBAccessAppender();
+    private final MongoDBAccessEventAppender appender = new MongoDBAccessEventAppender();
     private final AccessContext ac = new AccessContext();
 
     @BeforeTest
