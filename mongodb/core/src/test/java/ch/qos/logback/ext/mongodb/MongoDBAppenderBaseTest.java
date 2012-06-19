@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ch.qos.logback.core.ContextBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 
 import com.mongodb.BasicDBObject;
@@ -198,6 +199,7 @@ public class MongoDBAppenderBaseTest {
                 return dbObject;
             }
         };
+        appender.setContext(new ContextBase());
         new NonStrictExpectations() {
             {
                 mongo.getDB("database");
