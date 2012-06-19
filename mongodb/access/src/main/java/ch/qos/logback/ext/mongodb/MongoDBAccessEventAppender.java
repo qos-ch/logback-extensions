@@ -22,12 +22,15 @@ import ch.qos.logback.access.spi.IAccessEvent;
 import com.mongodb.BasicDBObject;
 
 /**
+ * A {@link MongoDBAppenderBase} handling {@link IAccessEvent}s.
+ * 
  * @author Tomasz Nurkiewicz
  * @author Christian Trutz
  * @since 0.1
  */
 public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent> {
 
+    // configuration parameters
     private boolean serverName = true;
     private boolean requestUri = true;
     private boolean requestProtocol = true;
@@ -42,6 +45,9 @@ public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent
     private boolean responseContentLength = true;
     private boolean responseStatusCode = true;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected BasicDBObject toMongoDocument(IAccessEvent event) {
         final BasicDBObject doc = new BasicDBObject();
@@ -54,6 +60,9 @@ public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent
         return doc;
     }
 
+    /*
+     * Add remote MongoDB sub-document.
+     */
     private void addRemote(BasicDBObject parent, IAccessEvent event) {
         final BasicDBObject remote = new BasicDBObject();
         if (remoteHost)
@@ -68,6 +77,9 @@ public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent
             parent.put("remote", remote);
     }
 
+    /*
+     * Add request MongoDB sub-document.
+     */
     private void addRequest(BasicDBObject parent, IAccessEvent event) {
         final BasicDBObject request = new BasicDBObject();
         final String uri = event.getRequestURI();
@@ -95,6 +107,9 @@ public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent
             parent.put("request", request);
     }
 
+    /*
+     * Add response MongoDB sub-document.
+     */
     private void addResponse(BasicDBObject doc, IAccessEvent event) {
         final BasicDBObject response = new BasicDBObject();
         if (responseContentLength)
@@ -104,6 +119,10 @@ public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent
         if (!response.isEmpty())
             doc.append("response", response);
     }
+
+    //
+    // Setter for configuration parameters ...
+    //
 
     public void setServerName(boolean serverName) {
         this.serverName = serverName;

@@ -108,7 +108,7 @@ public abstract class MongoDBAppenderBase<E> extends UnsynchronizedAppenderBase<
     }
 
     /**
-     * A uri contains all MongoDB connection data.
+     * A {@code uri} contains all MongoDB connection data.
      * 
      * @param uri
      *            <a href="http://www.mongodb.org/display/DOCS/Connections">a
