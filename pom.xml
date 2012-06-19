@@ -106,6 +106,7 @@
         <groovy.version>1.8.6</groovy.version>
         <testng.version>6.4</testng.version>
         <jmockit.version>0.999.15</jmockit.version>
+        <junit.version>4.8.2</junit.version>
 
     </properties>
 
@@ -133,6 +134,12 @@
             <groupId>com.googlecode.jmockit</groupId>
             <artifactId>jmockit</artifactId>
             <version>${jmockit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 

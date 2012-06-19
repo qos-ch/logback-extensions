@@ -15,9 +15,9 @@
  */
 package ch.qos.logback.ext.mongodb;
 
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import ch.qos.logback.access.spi.AccessContext;
 
@@ -31,13 +31,13 @@ public class MongoDBAccessEventAppenderTest {
     private final MongoDBAccessEventAppender appender = new MongoDBAccessEventAppender();
     private final AccessContext ac = new AccessContext();
 
-    @BeforeTest
+    @Before
     public void setUp() {
         appender.setContext(ac);
         appender.start();
     }
 
-    @AfterTest
+    @After
     public void tearDown() {
         appender.stop();
     }

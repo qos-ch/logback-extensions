@@ -15,14 +15,14 @@
  */
 package ch.qos.logback.ext.mongodb;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import mockit.Mocked;
 import mockit.NonStrictExpectations;
 import mockit.Verifications;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
@@ -185,7 +185,7 @@ public class MongoDBAppenderBaseTest {
     // this object will be inserted in MongoDB and represents an logging event
     private BasicDBObject dbObject = new BasicDBObject();
 
-    @BeforeMethod
+    @Before
     public void before() {
         appender = new MongoDBAppenderBase<ILoggingEvent>() {
             @Override
