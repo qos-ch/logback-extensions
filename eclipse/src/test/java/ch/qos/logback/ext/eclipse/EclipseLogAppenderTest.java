@@ -27,10 +27,10 @@ import java.util.Map;
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
-import static org.testng.Assert.*;
+import static org.junit.Assert.*;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
@@ -53,7 +53,7 @@ public class EclipseLogAppenderTest {
     private EclipseLogAppenderWithMockPlatform appender = null;
     private PatternLayoutEncoder encoder = null;
     
-    @BeforeMethod
+    @Before
     public void before() {
         // create the encoder and start it so that it initializes inner parameters
         // needed by the appender

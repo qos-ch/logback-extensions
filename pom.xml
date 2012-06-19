@@ -104,7 +104,6 @@
         <!-- Test Dependencies: -->
         <easymock.version>3.1</easymock.version>
         <groovy.version>1.8.6</groovy.version>
-        <testng.version>6.4</testng.version>
         <jmockit.version>0.999.15</jmockit.version>
         <junit.version>4.8.2</junit.version>
 
@@ -112,12 +111,6 @@
 
     <dependencies>
         <!-- Test Dependencies for _all_ children modules: -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
