@@ -17,36 +17,20 @@
 
     <parent>
         <groupId>ch.qos.logback.extensions</groupId>
-        <artifactId>logback-ext-parent</artifactId>
+        <artifactId>logback-ext-mongodb</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>logback-ext-mongodb</artifactId>
-    <name>Logback Extensions :: MongoDB</name>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>core</module>
-        <module>access</module>
-        <module>classic</module>
-    </modules>
+    <artifactId>logback-ext-mongodb-core</artifactId>
+    <name>Logback Extensions :: MongoDB :: Core</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-core</artifactId>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>ch.qos.logback.extensions</groupId>
-            <artifactId>logback-ext-mongodb-core</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-    </dependencyManagement>
 
 </project>
