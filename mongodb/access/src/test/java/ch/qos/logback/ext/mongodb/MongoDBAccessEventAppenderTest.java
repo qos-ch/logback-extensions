@@ -15,35 +15,76 @@
  */
 package ch.qos.logback.ext.mongodb;
 
-import org.junit.After;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Date;
+
+import mockit.Mocked;
+import mockit.NonStrictExpectations;
+import mockit.integration.junit4.JMockit;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import ch.qos.logback.access.spi.AccessContext;
+import ch.qos.logback.access.spi.IAccessEvent;
+
+import com.mongodb.BasicDBObject;
 
 /**
+ * Tests for {@link MongoDBAccessEventAppender}.
+ * 
  * @author Tomasz Nurkiewicz
  * @author Christian Trutz
  * @since 0.1
  */
+@RunWith(JMockit.class)
 public class MongoDBAccessEventAppenderTest {
 
-    private final MongoDBAccessEventAppender appender = new MongoDBAccessEventAppender();
-    private final AccessContext ac = new AccessContext();
+    // to be tested
+    private MongoDBAccessEventAppender appender = null;
 
-    @Before
-    public void setUp() {
-        appender.setContext(ac);
-        appender.start();
-    }
-
-    @After
-    public void tearDown() {
-        appender.stop();
+    @Test
+    public void testTimeStamp() {
+        // given
+        new NonStrictExpectations() {
+            {
+                event.getTimeStamp();
+                result = 1000L;
+            }
+        };
+        // when
+        final BasicDBObject dbObject = appender.toMongoDocument(event);
+        // then
+        assertEquals(new Date(1000L), dbObject.get("timeStamp"));
     }
 
     @Test
-    public void smokeTest() throws Exception {
+    public void testServerName() {
+        // given
+        new NonStrictExpectations() {
+            {
+                event.getServerName();
+                result = "servername";
+            }
+        };
+        // when
+        final BasicDBObject dbObject = appender.toMongoDocument(event);
+        // then
+        assertEquals("servername", dbObject.get("serverName"));
+    }
+
+    //
+    //
+    // MOCKING
+    //
+
+    @Mocked
+    private IAccessEvent event;
+
+    @Before
+    public void before() {
+        appender = new MongoDBAccessEventAppender();
     }
 
 }

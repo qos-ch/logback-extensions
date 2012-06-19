@@ -65,14 +65,16 @@ public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent
      */
     private void addRemote(BasicDBObject parent, IAccessEvent event) {
         final BasicDBObject remote = new BasicDBObject();
-        if (remoteHost)
-            remote.append("host", event.getRemoteHost());
+        final String host = event.getRemoteHost();
+        if (remoteHost && host != null)
+            remote.append("host", host);
         final String remoteUserName = event.getRemoteUser();
         if (remoteUser && remoteUserName != null && !remoteUserName.equals("-")) {
             remote.append("user", remoteUserName);
         }
-        if (remoteAddr)
-            remote.append("addr", event.getRemoteAddr());
+        final String addr = event.getRemoteAddr();
+        if (remoteAddr && addr != null)
+            remote.append("addr", addr);
         if (!remote.isEmpty())
             parent.put("remote", remote);
     }
@@ -86,22 +88,24 @@ public class MongoDBAccessEventAppender extends MongoDBAppenderBase<IAccessEvent
         if (requestUri && uri != null && !uri.equals("-")) {
             request.append("uri", uri);
         }
-        if (requestProtocol)
-            request.append("protocol", event.getProtocol());
-        if (requestMethod)
-            request.append("method", event.getMethod());
+        final String protocol = event.getProtocol();
+        if (requestProtocol && protocol != null)
+            request.append("protocol", protocol);
+        final String method = event.getMethod();
+        if (requestMethod && method != null)
+            request.append("method", method);
         final String requestContent = event.getRequestContent();
         if (requestPostContent && requestContent != null && !requestContent.equals("")) {
             request.append("postContent", requestContent);
         }
         final String jSessionId = event.getCookie("JSESSIONID");
-        if (requestSessionId && !jSessionId.equals("-"))
+        if (requestSessionId && jSessionId != null && !jSessionId.equals("-"))
             request.append("sessionId", jSessionId);
         final String userAgent = event.getRequestHeader("User-Agent");
-        if (requestUserAgent && !userAgent.equals("-"))
+        if (requestUserAgent && userAgent != null && !userAgent.equals("-"))
             request.append("userAgent", userAgent);
         final String referer = event.getRequestHeader("Referer");
-        if (requestReferer && !referer.equals("-"))
+        if (requestReferer && referer != null && !referer.equals("-"))
             request.append("referer", referer);
         if (!request.isEmpty())
             parent.put("request", request);
