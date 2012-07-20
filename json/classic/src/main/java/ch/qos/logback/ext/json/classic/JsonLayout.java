@@ -89,6 +89,12 @@ import java.util.Map;
  *             will be formatted to a String first via a {@link ch.qos.logback.classic.pattern.ThrowableProxyConverter ThrowableProxyConverter}.</td>
  *         <td>true</td>
  *     </tr>
+ *     <tr>
+ *         <td nowrap="nowrap">{@code context}</td>
+ *         <td nowrap="nowrap"><code>ILoggingEvent.{@link ch.qos.logback.classic.spi.ILoggingEvent#getLoggerContextVO() getLoggerContextVO()}</code></td>
+ *         <td>The name of the logger context. Defaults to <em>default</em>.</td>
+ *         <td>true</td>
+ *     </tr>
  * </table>
  * <p/>
  * The constructed Map will be serialized to JSON via the parent class's {@link #getJsonFormatter() jsonFormatter}.
@@ -107,6 +113,7 @@ public class JsonLayout extends JsonLayoutBase<ILoggingEvent> {
     public static final String FORMATTED_MESSAGE_ATTR_NAME = "message";
     public static final String MESSAGE_ATTR_NAME = "raw-message";
     public static final String EXCEPTION_ATTR_NAME = "exception";
+    public static final String CONTEXT_ATTR_NAME = "context";
 
     protected boolean includeLevel;
     protected boolean includeThreadName;
@@ -115,6 +122,7 @@ public class JsonLayout extends JsonLayoutBase<ILoggingEvent> {
     protected boolean includeFormattedMessage;
     protected boolean includeMessage;
     protected boolean includeException;
+    protected boolean includeContextName;
 
     private final ThrowableProxyConverter throwableProxyConverter;
 
@@ -126,6 +134,7 @@ public class JsonLayout extends JsonLayoutBase<ILoggingEvent> {
         this.includeLoggerName = true;
         this.includeFormattedMessage = true;
         this.includeException = true;
+        this.includeContextName = true;
         this.throwableProxyConverter = new ThrowableProxyConverter();
     }
 
@@ -197,6 +206,13 @@ public class JsonLayout extends JsonLayoutBase<ILoggingEvent> {
             }
         }
 
+        if (this.includeContextName) {
+            String msg = event.getLoggerContextVO().getName();
+            if (msg != null) {
+                map.put(CONTEXT_ATTR_NAME, msg);
+            }
+        }
+
         if (this.includeException) {
             IThrowableProxy throwableProxy = event.getThrowableProxy();
             if (throwableProxy != null) {
@@ -264,5 +280,13 @@ public class JsonLayout extends JsonLayoutBase<ILoggingEvent> {
 
     public void setIncludeException(boolean includeException) {
         this.includeException = includeException;
+    }
+
+    public boolean isIncludeContextName() {
+        return includeContextName;
+    }
+
+    public void setIncludeContextName(boolean includeContextName) {
+        this.includeContextName = includeContextName;
     }
 }
