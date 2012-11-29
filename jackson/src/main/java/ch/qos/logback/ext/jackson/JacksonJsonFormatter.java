@@ -35,10 +35,12 @@ public class JacksonJsonFormatter implements JsonFormatter {
 
     private ObjectMapper objectMapper;
     private boolean prettyPrint;
+    private boolean appendNewline;
 
     public JacksonJsonFormatter() {
         this.objectMapper = new ObjectMapper();
         this.prettyPrint = false;
+        this.appendNewline = false;
     }
 
     @Override
@@ -54,7 +56,8 @@ public class JacksonJsonFormatter implements JsonFormatter {
 
         writer.flush();
 
-        return writer.toString();
+        String result = writer.toString();
+        return appendNewline ? result + "\n" : result;
     }
 
     public ObjectMapper getObjectMapper() {
@@ -72,5 +75,14 @@ public class JacksonJsonFormatter implements JsonFormatter {
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
+
+    public boolean isAppendNewline() {
+        return appendNewline;
+    }
+
+    public void setAppendNewline(boolean appendNewline) {
+        this.appendNewline = appendNewline;
+    }
+
 }
 
