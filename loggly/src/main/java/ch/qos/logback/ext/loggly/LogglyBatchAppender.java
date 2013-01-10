@@ -176,7 +176,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
     private int maxBucketSizeInKoBytes = 1024;
 
-    private Charset charset = Charset.forName("ISO-8859-1");
+    private Charset charset = Charset.forName("UTF-8");
 
     @Override
     protected void append(E eventObject) {
@@ -303,12 +303,18 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
             URL url = new URL(endpointUrl);
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+            HttpURLConnection conn;
+            if (proxy == null) {
+                conn = (HttpURLConnection) url.openConnection();
+            } else {
+                conn = (HttpURLConnection) url.openConnection(proxy);
+            }
+
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setRequestProperty("Content-Type",  layout.getContentType() + "; charset=" + charset.name());
             conn.setRequestMethod("POST");
-            conn.setReadTimeout((int) TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS));
+            conn.setReadTimeout(getHttpReadTimeoutInMillis());
             BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());
 
             long len = IoUtils.copy(in, out);

@@ -43,6 +43,7 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
     private int proxyPort;
     private String proxyHost;
     protected Proxy proxy;
+    private int httpReadTimeoutInMillis = 1000;
 
     @Override
     public void start() {
@@ -59,7 +60,8 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
         }
 
         if (this.proxyHost == null || this.proxyHost.isEmpty()) {
-            this.proxy = Proxy.NO_PROXY;
+            // don't set it to Proxy.NO_PROXY (i.e. Proxy.Type.DIRECT) as the meaning is different (user-jvm-proxy-config vs. don't use proxy)
+            this.proxy = null;
         } else {
             this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
         }
@@ -175,7 +177,7 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
         this.proxyPort = proxyPort;
     }
     public void setProxyPort(String proxyPort) {
-        if(proxyPort == null || proxyPort.isEmpty()) {
+        if(proxyPort == null || proxyPort.trim().isEmpty()) {
             // handle logback configuration default value like "<proxyPort>${logback.loggly.proxy.port:-}</proxyPort>"
             proxyPort = "0";
         }
@@ -187,6 +189,18 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
     }
 
     public void setProxyHost(String proxyHost) {
+        if(proxyHost == null || proxyHost.trim().isEmpty()) {
+            // handle logback configuration default value like "<proxyHost>${logback.loggly.proxy.host:-}</proxyHost>"
+            proxyHost = null;
+        }
         this.proxyHost = proxyHost;
+    }
+
+    public int getHttpReadTimeoutInMillis() {
+        return httpReadTimeoutInMillis;
+    }
+
+    public void setHttpReadTimeoutInMillis(int httpReadTimeoutInMillis) {
+        this.httpReadTimeoutInMillis = httpReadTimeoutInMillis;
     }
 }

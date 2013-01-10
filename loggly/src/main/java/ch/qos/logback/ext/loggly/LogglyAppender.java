@@ -42,7 +42,12 @@ public class LogglyAppender<E> extends AbstractLogglyAppender<E> {
         try {
             assert endpointUrl != null;
             URL endpoint = new URL(endpointUrl);
-            final HttpURLConnection connection = (HttpURLConnection)endpoint.openConnection();
+            final HttpURLConnection connection;
+            if (proxy == null) {
+                connection = (HttpURLConnection) endpoint.openConnection();
+            } else {
+                connection = (HttpURLConnection) endpoint.openConnection(proxy);
+            }
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.addRequestProperty("Content-Type", this.layout.getContentType());
