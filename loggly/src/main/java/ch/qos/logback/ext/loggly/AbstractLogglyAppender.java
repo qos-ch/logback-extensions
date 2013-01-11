@@ -28,6 +28,10 @@ import java.net.Proxy;
 import java.nio.charset.Charset;
 
 /**
+ * Common base for Loggly appenders.
+ *
+ * @author Mårten Gustafson
+ * @author Les Hazlewood
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  */
 public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBase<E> {
