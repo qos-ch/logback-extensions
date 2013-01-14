@@ -82,13 +82,6 @@
             <url>http://tony19.github.com</url>
             <timezone>-5</timezone>
         </developer>
-        <developer>
-            <id>kaxelson</id>
-            <name>Knute Axelson</name>
-            <email>kaxelson@gmail.com</email>
-            <url>https://github.com/kaxelson</url>
-            <timezone>-6</timezone>
-        </developer>
     </developers>
 
     <modules>
