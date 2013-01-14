@@ -82,6 +82,13 @@
             <url>http://tony19.github.com</url>
             <timezone>-5</timezone>
         </developer>
+        <developer>
+            <id>kaxelson</id>
+            <name>Knute Axelson</name>
+            <email>kaxelson@gmail.com</email>
+            <url>https://github.com/kaxelson</url>
+            <timezone>-6</timezone>
+        </developer>
     </developers>
 
     <modules>
@@ -278,6 +285,30 @@
                             <version>${groovy.version}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.gmaven</groupId>
+                                        <artifactId>gmaven-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>testCompile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
