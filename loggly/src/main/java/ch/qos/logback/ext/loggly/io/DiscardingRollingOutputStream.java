@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2012-2013 Ceki Gulcu, Les Hazlewood, et. al.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * </p>
  * <p>
  * Each 'bucket' is limited in size (see {@link #maxBucketSizeInBytes}) and the total size of the {@linkplain OutputStream}
- * is bounded thanks to a discarding policy. And external component is expected to consume the filled buckets thanks to
+ * is bounded thanks to a discarding policy. An external component is expected to consume the filled buckets thanks to
  * {@link #getFilledBuckets()}.
  * </p>
  * <p>
@@ -38,7 +38,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * </p>
  * <ul>
  * <li>Why in-memory without offload on disk: offload on disk was possible with Google Guava's
- * <code>FileBackedOutputStream</code> but had the drawback to introduce a dependency. Loggly bacth appender usecase
+ * <code>FileBackedOutputStream</code> but had the drawback to introduce a dependency. Loggly batch appender use case
  * should be OK with a pure in-memory approach.</li>
  * </ul>
  *
@@ -149,7 +149,7 @@ public class DiscardingRollingOutputStream extends OutputStream {
     }
 
     /**
-     * Moves the current active bucket to the list of filled bucket and defines a new one.
+     * Moves the current active bucket to the list of filled buckets and defines a new one.
      * <p/>
      * The new active bucket is reused from the {@link #recycledBucketPool} pool if one is available or recreated.
      */

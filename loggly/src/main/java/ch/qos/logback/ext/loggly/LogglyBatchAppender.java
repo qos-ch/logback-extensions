@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Ceki Gulcu, Les Hazlewood and the original author or authors.
+ * Copyright 2012-2013 Ceki Gulcu, Les Hazlewood, et. al.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * <p>
  * <a href="http://logback.qos.ch/">Logback</a> batch appender for <a href="http://www.loggly.com/">Loggly</a> HTTP API</a>.
  * </p>
- * <p><strong>Note:</strong>Loggly's Syslog API is much more scalable then the HTTP API which should mostly used
- * to low volume or non-production systems. The HTTP API can be very convenient to workaround firewalls.</p>
+ * <p><strong>Note:</strong>Loggly's Syslog API is much more scalable than the HTTP API which should mostly be used in
+ * low-volume or non-production systems. The HTTP API can be very convenient to workaround firewalls.</p>
  * <p>If the {@link LogglyBatchAppender} saturates and discards log messages, the following warning message is
  * appended to both Loggly and {@link System#err}: <br/>
  * "<code>$date - OutputStream is full, discard previous logs</code>"</p>
