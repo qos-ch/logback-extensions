@@ -15,17 +15,19 @@
  */
 package ch.qos.logback.ext.spring;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.classic.selector.ContextSelector;
-import ch.qos.logback.classic.util.ContextSelectorStaticBinder;
-import ch.qos.logback.core.joran.spi.JoranException;
-import org.springframework.util.ResourceUtils;
-import org.springframework.util.SystemPropertyUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+
+import org.slf4j.impl.StaticLoggerBinder;
+import org.springframework.util.ResourceUtils;
+import org.springframework.util.SystemPropertyUtils;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.selector.ContextSelector;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.classic.util.ContextSelectorStaticBinder;
+import ch.qos.logback.core.joran.spi.JoranException;
 
 /**
  * Convenience class that features simple methods for custom Log4J configuration.
@@ -42,6 +44,7 @@ import java.net.URL;
  * @author Juergen Hoeller
  * @author Bryan Turner
  * @author Les Hazlewood
+ * @author Knute Axelson
  * @see ch.qos.logback.ext.spring.web.WebLogbackConfigurer WebLogbackConfigurer
  * @see ch.qos.logback.ext.spring.web.LogbackConfigListener LogbackConfigListener
  * @see ch.qos.logback.ext.spring.web.LogbackConfigServlet LogbackConfigServlet
@@ -66,13 +69,13 @@ public class LogbackConfigurer {
     public static void initLogging(String location) throws FileNotFoundException, JoranException {
         String resolvedLocation = SystemPropertyUtils.resolvePlaceholders(location);
         URL url = ResourceUtils.getURL(resolvedLocation);
-        ContextSelector selector = ContextSelectorStaticBinder.getSingleton().getContextSelector();
-        LoggerContext loggerContext = selector.getLoggerContext();
+        LoggerContext loggerContext = (LoggerContext)StaticLoggerBinder.getSingleton().getLoggerFactory();
+
         // in the current version logback automatically configures at startup the context, so we have to reset it
         loggerContext.reset();
-        JoranConfigurator configurator = new JoranConfigurator();
-        configurator.setContext(loggerContext);
-        configurator.doConfigure(url);
+
+        // reinitialize the logger context.  calling this method allows configuration through groovy or xml
+        new ContextInitializer(loggerContext).configureByResource(url);
     }
 
     /**
