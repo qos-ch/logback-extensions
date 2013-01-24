@@ -18,18 +18,18 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [${HOSTNAME}] [%thread] %-5level %logger{36} - %msg %ex{5}%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %throwable{5}%n</pattern>
         </encoder>
     </appender>
 
     <if condition='isDefined("logback.loggly.inputKey")'>
         <then>
             <appender name="loggly" class="ch.qos.logback.ext.loggly.LogglyBatchAppender">
-                <pattern>%d{yyyy/MM/dd HH:mm:ss,SSS} [${HOSTNAME}] [%thread] %-5level %logger{36} - %m %throwable{5}%n
+                <pattern>%d{yyyy/MM/dd HH:mm:ss,SSS} [${HOSTNAME}] [%thread] %-5level %logger{36} - %msg %throwable{5}%n
                 </pattern>
                 <inputKey>${logback.loggly.inputKey:-}</inputKey>
                 <proxyHost>${logback.loggly.proxy.host:-}</proxyHost>
-                <proxyPort>${logback.loggly.proxy.port:-}</proxyPort>
+                <proxyPort>${logback.loggly.proxy.port:-8080}</proxyPort>
                 <debug>${logback.loggly.debug:-false}</debug>
             </appender>
             <root level="WARN">

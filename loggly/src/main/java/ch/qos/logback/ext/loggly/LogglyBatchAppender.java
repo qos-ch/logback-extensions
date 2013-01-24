@@ -73,8 +73,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <tr>
  * <td>proxyPort</td>
  * <td>int</td>
- * <td>port a proxy server. blank string defaults to 0 to ease
- * <a href="http://logback.qos.ch/manual/configuration.html#variableSubstitution">property substitution</a> in <code>logback.xml</code> (See {@link URL#openConnection(java.net.Proxy)}.</td>
+ * <td>port of a proxy server. Must be a valid int but is ignored if <code>proxyHost</code> is blank or null.</td>
  * </tr>
  * <tr>
  * <td>jmxMonitoring</td>
@@ -110,7 +109,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *         &lt;inputKey&gt;${logback.loggly.inputKey}&lt;/inputKey&gt;
  *         &lt;pattern&gt;%d{yyyy/MM/dd HH:mm:ss,SSS} [${HOSTNAME}] [%thread] %-5level %logger{36} - %m %throwable{5}%n&lt;/pattern&gt;
  *         &lt;proxyHost&gt;${logback.loggly.proxy.host:-}&lt;/proxyHost&gt;
- *         &lt;proxyPort&gt;${logback.loggly.proxy.port:-}&lt;/proxyPort&gt;
+ *         &lt;proxyPort&gt;${logback.loggly.proxy.port:-8080}&lt;/proxyPort&gt;
  *         &lt;debug&gt;${logback.loggly.debug:-false}&lt;/debug&gt;
  *       &lt;/appender&gt;
  *       &lt;root level="WARN"&gt;
