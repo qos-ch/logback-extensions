@@ -84,12 +84,12 @@ import java.util.concurrent.atomic.AtomicLong;
  * <tr>
  * <td>maxNumberOfBuckets</td>
  * <td>int</td>
- * <td>Max number of buckets of in the bytes buffer. Default value: <code>8</code>.</td>
+ * <td>Max number of buckets of in the byte buffer. Default value: <code>8</code>.</td>
  * </tr>
  * <tr>
- * <td>maxBucketSizeInKoBytes</td>
+ * <td>maxBucketSizeInKilobytes</td>
  * <td>int</td>
- * <td>Max size of each bucket. Default value: <code>1024</code>.</td>
+ * <td>Max size of each bucket. Default value: <code>1024</code> Kilobytes (1Mo).</td>
  * </tr>
  * <tr>
  * <td>flushIntervalInSeconds</td>
@@ -97,7 +97,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <td>Interval of the buffer flush to Loggly API. Default value: <code>3</code>.</td>
  * </tr>
  * </table>
- * Default configuration consumes up to 8 buffers of 1Mo each which seemed very reasonable even for small JVMs.
+ * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1Mo) each which seemed very reasonable even for small JVMs.
  * If logs are discarded, try first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
  * <p/>
  * <h2>Configuration Sample</h2>
@@ -123,11 +123,11 @@ import java.util.concurrent.atomic.AtomicLong;
  * <p/>
  * <h2>Implementation decisions</h2>
  * <ul>
- * <li>Why buffering the generated log messages as bytes instead of using the
+ * <li>Why buffer the generated log messages as bytes instead of using the
  * {@link ch.qos.logback.core.read.CyclicBufferAppender} and buffering the {@link ch.qos.logback.classic.spi.ILoggingEvent} ?
- * Because it is much more easy to control the size in memory</li>
+ * Because it is much easier to control the size in memory</li>
  * <li>
- * Why buffering in a byte array instead of directly writing in a {@link BufferedOutputStream} on the {@link HttpURLConnection} ?
+ * Why buffer in a byte array instead of directly writing in a {@link BufferedOutputStream} on the {@link HttpURLConnection} ?
  * Because the Loggly API may not like such kind of streaming approach.
  * </li>
  * </ul>
@@ -138,7 +138,12 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
     private static boolean debug = false;
 
-    public static void log(String message, Object... args) {
+    /**
+     * We prefer to re-implement a log method because {@link ch.qos.logback.core.spi.ContextAwareBase#addInfo(String)}
+     * does not support formatted messages and there is no "isInfoEnabled()" to skip message concatenation if debug is
+     * disabled
+     */
+    private static void log(String message, Object... args) {
         if (!debug) {
             return;
         }
@@ -173,7 +178,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
     private int maxNumberOfBuckets = 8;
 
-    private int maxBucketSizeInKoBytes = 1024;
+    private int maxBucketSizeInKilobytes = 1024;
 
     private Charset charset = Charset.forName("UTF-8");
 
@@ -195,7 +200,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
         // OUTPUTSTREAM
         outputStream = new DiscardingRollingOutputStream(
-                maxBucketSizeInKoBytes * 1024,
+                maxBucketSizeInKilobytes * 1024,
                 maxNumberOfBuckets) {
             @Override
             protected void onBucketDiscard(ByteArrayOutputStream discardedBucket) {
@@ -406,8 +411,8 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         this.maxNumberOfBuckets = maxNumberOfBuckets;
     }
 
-    public void setMaxBucketSizeInKoBytes(int maxBucketSizeInKoBytes) {
-        this.maxBucketSizeInKoBytes = maxBucketSizeInKoBytes;
+    public void setMaxBucketSizeInKilobytes(int maxBucketSizeInKilobytes) {
+        this.maxBucketSizeInKilobytes = maxBucketSizeInKilobytes;
     }
 
     @Override
