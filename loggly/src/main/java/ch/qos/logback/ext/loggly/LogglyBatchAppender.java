@@ -26,7 +26,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -136,25 +135,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements LogglyBatchAppenderMBean {
 
-    private static boolean debug = false;
-
-    /**
-     * We prefer to re-implement a log method because {@link ch.qos.logback.core.spi.ContextAwareBase#addInfo(String)}
-     * does not support formatted messages and there is no "isInfoEnabled()" to skip message concatenation if debug is
-     * disabled
-     */
-    private static void log(String message, Object... args) {
-        if (!debug) {
-            return;
-        }
-        try {
-            String formattedMessage = String.format(message, args);
-            System.err.println(new Timestamp(System.currentTimeMillis()) + " - LogglyBatchAppender [" + Thread.currentThread().getName() + "] " + formattedMessage);
-        } catch (Exception e) {
-            System.err.println(new Timestamp(System.currentTimeMillis()) + " - LogglyBatchAppender [" + Thread.currentThread().getName() + "] " + message + " - " + Arrays.asList(args));
-            e.printStackTrace();
-        }
-    }
+    private boolean debug = false;
 
     private int flushIntervalInSeconds = 3;
 
@@ -204,7 +185,9 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
                 maxNumberOfBuckets) {
             @Override
             protected void onBucketDiscard(ByteArrayOutputStream discardedBucket) {
-                LogglyBatchAppender.log("Discard bucket - %s", this);
+                if (isDebug()) {
+                    addInfo("Discard bucket - " + this);
+                }
                 String s = new Timestamp(System.currentTimeMillis()) + " - OutputStream is full, discard previous logs" + LINE_SEPARATOR;
                 try {
                     getFilledBuckets().peekLast().write(s.getBytes());
@@ -216,7 +199,9 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
             @Override
             protected void onBucketRoll(ByteArrayOutputStream rolledBucket) {
-                LogglyBatchAppender.log("Roll bucket - %s", this);
+                if (isDebug()) {
+                    addInfo("Roll bucket - " + this);
+                }
             }
 
         };
@@ -279,7 +264,9 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
      */
     @Override
     public void processLogEntries() {
-        log("processLogEntries() %s", this);
+        if (isDebug()) {
+            addInfo("processLogEntries() " + this);
+        }
 
         outputStream.rollCurrentBucketIfNotEmpty();
         BlockingDeque<ByteArrayOutputStream> filledBuckets = outputStream.getFilledBuckets();
@@ -392,11 +379,11 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     }
 
     public void setDebug(boolean debug) {
-        LogglyBatchAppender.debug = debug;
+        this.debug = debug;
     }
 
     public boolean isDebug() {
-        return LogglyBatchAppender.debug;
+        return debug;
     }
 
     public void setJmxMonitoring(boolean jmxMonitoring) {
