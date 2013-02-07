@@ -88,7 +88,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <tr>
  * <td>maxBucketSizeInKilobytes</td>
  * <td>int</td>
- * <td>Max size of each bucket. Default value: <code>1024</code> Kilobytes (1Mo).</td>
+ * <td>Max size of each bucket. Default value: <code>1024</code> Kilobytes (1MB).</td>
  * </tr>
  * <tr>
  * <td>flushIntervalInSeconds</td>
@@ -96,7 +96,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <td>Interval of the buffer flush to Loggly API. Default value: <code>3</code>.</td>
  * </tr>
  * </table>
- * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1Mo) each which seemed very reasonable even for small JVMs.
+ * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each, which seems very reasonable even for small JVMs.
  * If logs are discarded, try first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
  * <p/>
  * <h2>Configuration Sample</h2>
@@ -186,7 +186,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
             @Override
             protected void onBucketDiscard(ByteArrayOutputStream discardedBucket) {
                 if (isDebug()) {
-                    addInfo("Discard bucket - " + this);
+                    addInfo("Discard bucket - " + getDebugInfo());
                 }
                 String s = new Timestamp(System.currentTimeMillis()) + " - OutputStream is full, discard previous logs" + LINE_SEPARATOR;
                 try {
@@ -200,7 +200,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
             @Override
             protected void onBucketRoll(ByteArrayOutputStream rolledBucket) {
                 if (isDebug()) {
-                    addInfo("Roll bucket - " + this);
+                    addInfo("Roll bucket - " + getDebugInfo());
                 }
             }
 
@@ -265,7 +265,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     @Override
     public void processLogEntries() {
         if (isDebug()) {
-            addInfo("processLogEntries() " + this);
+            addInfo("Process log entries - " + getDebugInfo());
         }
 
         outputStream.rollCurrentBucketIfNotEmpty();
@@ -402,9 +402,8 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         this.maxBucketSizeInKilobytes = maxBucketSizeInKilobytes;
     }
 
-    @Override
-    public String toString() {
-        return "LogglyBatchAppender{" +
+    private String getDebugInfo() {
+        return "{" +
                 "sendDurationInMillis=" + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS) +
                 ", sendSuccessCount=" + sendSuccessCount +
                 ", sendExceptionCount=" + sendExceptionCount +

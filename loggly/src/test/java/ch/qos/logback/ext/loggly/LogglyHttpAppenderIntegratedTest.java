@@ -45,7 +45,7 @@ public class LogglyHttpAppenderIntegratedTest {
         System.out.println("Generate " + file);
         final OutputStream out = new FileOutputStream(file);
 
-        LogglyBatchAppender appender = new LogglyBatchAppender() {
+        LogglyBatchAppender<String> appender = new LogglyBatchAppender<String>() {
             @Override
             protected void processLogEntries(InputStream in) throws IOException {
                 // super.processLogEntries(in);
@@ -53,7 +53,7 @@ public class LogglyHttpAppenderIntegratedTest {
             }
         };
         appender.setInputKey("YOUR LOGGLY INPUT KEY");
-        appender.setLayout(new EchoLayout());
+        appender.setLayout(new EchoLayout<String>());
         appender.setDebug(true);
 
         // Start
