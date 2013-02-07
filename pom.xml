@@ -17,7 +17,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ch.qos.logback.extensions</groupId>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+    <groupId>org.logback-extensions</groupId>
     <artifactId>logback-ext-parent</artifactId>
     <packaging>pom</packaging>
     <version>0.1.0-SNAPSHOT</version>
@@ -46,19 +52,6 @@
         <system>GitHub</system>
         <url>https://github.com/qos-ch/logback-extensions/issues</url>
     </issueManagement>
-
-    <distributionManagement>
-        <repository>
-            <id>logback-extensions.repository.releases</id>
-            <name>Logback Extensions Release Distribution Repository</name>
-            <url>${logback-extensions.repository.releases.url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>logback-extensions.repository.snapshots</id>
-            <name>Logback Extensions Snapshot Distribution Repository</name>
-            <url>${logback-extensions.repository.snapshots.url}</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <developers>
         <developer>
@@ -370,6 +363,34 @@
                             </execution>
                         </executions>
                         <inherited>true</inherited>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
