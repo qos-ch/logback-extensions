@@ -26,7 +26,7 @@
     <groupId>org.logback-extensions</groupId>
     <artifactId>logback-ext-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
 
     <name>Logback Extensions</name>
     <url>https://github.com/qos-ch/logback-extensions/wiki</url>
