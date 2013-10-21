@@ -151,6 +151,13 @@ public class WebLogbackConfigurer {
         //from the Java Logging framework into SLF4J. When logging is terminated, the bridge will need to be uninstalled
         try {
             Class<?> julBridge = ClassUtils.forName("org.slf4j.bridge.SLF4JBridgeHandler", ClassUtils.getDefaultClassLoader());
+            
+            Method removeHandlers = ReflectionUtils.findMethod(julBridge, "removeHandlersForRootLogger");
+            if (removeHandlers != null) {
+                servletContext.log("Removing all previous handlers for JUL to SLF4J bridge");
+                ReflectionUtils.invokeMethod(removeHandlers, null);
+            }
+            
             Method install = ReflectionUtils.findMethod(julBridge, "install");
             if (install != null) {
                 servletContext.log("Installing JUL to SLF4J bridge");
