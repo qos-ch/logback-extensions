@@ -127,11 +127,11 @@ public class WebLogbackConfigurer {
         if (location != null) {
             // Perform actual Logback initialization; else rely on Logback's default initialization.
             try {
+                // Resolve system property placeholders before potentially resolving real path.
+                location = SystemPropertyUtils.resolvePlaceholders(location);
                 // Return a URL (e.g. "classpath:" or "file:") as-is;
                 // consider a plain file path as relative to the web application root directory.
                 if (!ResourceUtils.isUrl(location)) {
-                    // Resolve system property placeholders before resolving real path.
-                    location = SystemPropertyUtils.resolvePlaceholders(location);
                     location = WebUtils.getRealPath(servletContext, location);
                 }
 
