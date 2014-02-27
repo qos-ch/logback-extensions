@@ -15,20 +15,29 @@
  */
 package ch.qos.logback.ext.loggly;
 
-import ch.qos.logback.ext.loggly.io.DiscardingRollingOutputStream;
-import ch.qos.logback.ext.loggly.io.IoUtils;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import ch.qos.logback.ext.loggly.io.DiscardingRollingOutputStream;
+import ch.qos.logback.ext.loggly.io.IoUtils;
 
 /**
  * <p>
@@ -284,6 +293,29 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         }
     }
 
+    /**
+     * Creates a configured HTTP connection to a URL (does not open the
+     * connection)
+     *
+     * @param url target URL
+     * @return the newly created HTTP connection
+     * @throws IOException
+     */
+    protected HttpURLConnection getHttpConnection(URL url) throws IOException {
+        HttpURLConnection conn;
+        if (proxy == null) {
+            conn = (HttpURLConnection) url.openConnection();
+        } else {
+            conn = (HttpURLConnection) url.openConnection(proxy);
+        }
+
+        conn.setDoOutput(true);
+        conn.setDoInput(true);
+        conn.setRequestProperty("Content-Type", layout.getContentType() + "; charset=" + charset.name());
+        conn.setRequestMethod("POST");
+        conn.setReadTimeout(getHttpReadTimeoutInMillis());
+        return conn;
+    }
 
     /**
      * Send log entries to Loggly
@@ -292,20 +324,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         long nanosBefore = System.nanoTime();
         try {
 
-            URL url = new URL(endpointUrl);
-
-            HttpURLConnection conn;
-            if (proxy == null) {
-                conn = (HttpURLConnection) url.openConnection();
-            } else {
-                conn = (HttpURLConnection) url.openConnection(proxy);
-            }
-
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setRequestProperty("Content-Type",  layout.getContentType() + "; charset=" + charset.name());
-            conn.setRequestMethod("POST");
-            conn.setReadTimeout(getHttpReadTimeoutInMillis());
+            HttpURLConnection conn = getHttpConnection(new URL(endpointUrl));
             BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());
 
             long len = IoUtils.copy(in, out);
