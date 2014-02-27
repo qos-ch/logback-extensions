@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.qos.logback.classic.LoggerContext;
@@ -34,6 +35,7 @@ import ch.qos.logback.core.status.OnConsoleStatusListener;
 /**
  * Tests the LogglyBatchAppender
  */
+@Ignore
 public class LogglyBatchAppenderTest {
 
   static private final int                   PORT           = 10800;
