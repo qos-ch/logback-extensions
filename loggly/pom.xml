@@ -26,6 +26,10 @@
   <name>Logback Extensions :: Loggly</name>
   <packaging>jar</packaging>
 
+  <properties>
+    <!-- redirect test output to a file in order to reduce noise -->
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+  </properties>
 
   <dependencies>
     <dependency>
