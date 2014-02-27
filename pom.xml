@@ -92,9 +92,7 @@
         <mongo-java-driver.version>2.7.3</mongo-java-driver.version>
 
         <!-- Test Dependencies: -->
-        <easymock.version>3.1</easymock.version>
         <groovy.version>1.8.6</groovy.version>
-        <jmockit.version>0.999.15</jmockit.version>
         <junit.version>4.8.2</junit.version>
 
     </properties>
@@ -108,15 +106,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>${easymock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.jmockit</groupId>
-            <artifactId>jmockit</artifactId>
-            <version>${jmockit.version}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
