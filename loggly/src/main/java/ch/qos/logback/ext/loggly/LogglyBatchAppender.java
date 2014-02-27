@@ -32,10 +32,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
 import ch.qos.logback.ext.loggly.io.DiscardingRollingOutputStream;
 import ch.qos.logback.ext.loggly.io.IoUtils;
 
@@ -43,11 +41,14 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <p>
  * <a href="http://logback.qos.ch/">Logback</a> batch appender for <a href="http://www.loggly.com/">Loggly</a> HTTP API</a>.
  * </p>
- * <p><strong>Note:</strong>Loggly's Syslog API is much more scalable than the HTTP API which should mostly be used in
- * low-volume or non-production systems. The HTTP API can be very convenient to workaround firewalls.</p>
- * <p>If the {@link LogglyBatchAppender} saturates and discards log messages, the following warning message is
- * appended to both Loggly and {@link System#err}: <br/>
- * "<code>$date - OutputStream is full, discard previous logs</code>"</p>
+ * <p>
+ * <strong>Note:</strong>Loggly's Syslog API is much more scalable than the HTTP API which should mostly be used in low-volume or non-production systems. The
+ * HTTP API can be very convenient to workaround firewalls.
+ * </p>
+ * <p>
+ * If the {@link LogglyBatchAppender} saturates and discards log messages, the following warning message is appended to both Loggly and {@link System#err}: <br/>
+ * "<code>$date - OutputStream is full, discard previous logs</code>"
+ * </p>
  * <h2>Configuration settings</h2>
  * <table>
  * <tr>
@@ -58,20 +59,18 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <tr>
  * <td>inputKey</td>
  * <td>String</td>
- * <td>Loggly input key. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample
- * "<code>12345678-90ab-cdef-1234-567890abcdef</code>"</td>
+ * <td>Loggly input key. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample "<code>12345678-90ab-cdef-1234-567890abcdef</code>"</td>
  * </tr>
  * <tr>
  * <td>endpointUrl</td>
  * <td>String</td>
- * <td>Loggly HTTP API endpoint URL. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample:
- * "<code>https://logs.loggly.com/inputs/12345678-90ab-cdef-1234-567890abcdef</code>"</td>
+ * <td>Loggly HTTP API endpoint URL. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample: "
+ * <code>https://logs.loggly.com/inputs/12345678-90ab-cdef-1234-567890abcdef</code>"</td>
  * </tr>
  * <tr>
  * <td>pattern</td>
  * <td>String</td>
- * <td>Pattern used for Loggly log messages. Default value is:
- * <code>%d{"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",UTC} %-5level [%thread] %logger: %m%n</code>.</td>
+ * <td>Pattern used for Loggly log messages. Default value is: <code>%d{"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",UTC} %-5level [%thread] %logger: %m%n</code>.</td>
  * </tr>
  * <tr>
  * <td>proxyHost</td>
@@ -86,8 +85,8 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <tr>
  * <td>jmxMonitoring</td>
  * <td>boolean</td>
- * <td>Enable registration of a monitoring MBean named
- * "<code>ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@#hashcode#</code>". Default: <code>true</code>.</td>
+ * <td>Enable registration of a monitoring MBean named "<code>ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@#hashcode#</code>". Default:
+ * <code>true</code>.</td>
  * </tr>
  * <tr>
  * <td>maxNumberOfBuckets</td>
@@ -105,11 +104,13 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <td>Interval of the buffer flush to Loggly API. Default value: <code>3</code>.</td>
  * </tr>
  * </table>
- * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each, which seems very reasonable even for small JVMs.
- * If logs are discarded, try first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
+ * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each, which seems very reasonable even for small JVMs. If logs are discarded, try
+ * first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
  * <p/>
  * <h2>Configuration Sample</h2>
- * <pre><code>
+ * 
+ * <pre>
+ * <code>
  * &lt;configuration scan="true" scanPeriod="30 seconds" debug="true"&gt;
  *   &lt;if condition='isDefined("logback.loggly.inputKey")'&gt;
  *     &lt;then&gt;
@@ -126,320 +127,328 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  *     &lt;/then&gt;
  *   &lt;/if&gt;
  * &lt;/configuration&gt;
- * </code></pre>
+ * </code>
+ * </pre>
+ * 
  * </p>
  * <p/>
  * <h2>Implementation decisions</h2>
  * <ul>
- * <li>Why buffer the generated log messages as bytes instead of using the
- * {@link ch.qos.logback.core.read.CyclicBufferAppender} and buffering the {@link ch.qos.logback.classic.spi.ILoggingEvent} ?
- * Because it is much easier to control the size in memory</li>
+ * <li>Why buffer the generated log messages as bytes instead of using the {@link ch.qos.logback.core.read.CyclicBufferAppender} and buffering the
+ * {@link ch.qos.logback.classic.spi.ILoggingEvent} ? Because it is much easier to control the size in memory</li>
  * <li>
- * Why buffer in a byte array instead of directly writing in a {@link BufferedOutputStream} on the {@link HttpURLConnection} ?
- * Because the Loggly API may not like such kind of streaming approach.
- * </li>
+ * Why buffer in a byte array instead of directly writing in a {@link BufferedOutputStream} on the {@link HttpURLConnection} ? Because the Loggly API may not
+ * like such kind of streaming approach.</li>
  * </ul>
- *
+ * 
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  */
 public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements LogglyBatchAppenderMBean {
 
-    private boolean debug = false;
+	private boolean debug = false;
 
-    private int flushIntervalInSeconds = 3;
+	private int flushIntervalInSeconds = 3;
 
-    private DiscardingRollingOutputStream outputStream;
+	private DiscardingRollingOutputStream outputStream;
 
-    protected final AtomicLong sendDurationInNanos = new AtomicLong();
+	protected final AtomicLong sendDurationInNanos = new AtomicLong();
 
-    protected final AtomicLong sentBytes = new AtomicLong();
+	protected final AtomicLong sentBytes = new AtomicLong();
 
-    protected final AtomicInteger sendSuccessCount = new AtomicInteger();
+	protected final AtomicInteger sendSuccessCount = new AtomicInteger();
 
-    protected final AtomicInteger sendExceptionCount = new AtomicInteger();
+	protected final AtomicInteger sendExceptionCount = new AtomicInteger();
 
-    private ScheduledExecutorService scheduledExecutor;
+	private ScheduledExecutorService scheduledExecutor;
 
-    private boolean jmxMonitoring = true;
+	private boolean jmxMonitoring = true;
 
-    private MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+	private MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 
-    private ObjectName registeredObjectName;
+	private ObjectName registeredObjectName;
 
-    private int maxNumberOfBuckets = 8;
+	private int maxNumberOfBuckets = 8;
 
-    private int maxBucketSizeInKilobytes = 1024;
+	private int maxBucketSizeInKilobytes = 1024;
 
-    private Charset charset = Charset.forName("UTF-8");
+	private Charset charset = Charset.forName("UTF-8");
 
-    @Override
-    protected void append(E eventObject) {
-        if (!isStarted()) {
-            return;
-        }
-        String msg = this.layout.doLayout(eventObject);
-        try {
-            outputStream.write(msg.getBytes(charset));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@Override
+	protected void append(E eventObject) {
+		if (!isStarted()) {
+			return;
+		}
+		String msg = layout.doLayout(eventObject);
+		try {
+			//if the buffer is not empty and the last byte isn't a newline character, then we'll need to insert one so 
+			//that loggly interprets the batch contents as individual events. this is important when using JSON events.
+			if (!outputStream.isEmpty() && outputStream.peekLast() != 0x0A) {
+				outputStream.write(0x0A);
+			}
 
-    @Override
-    public void start() {
+			//write the intended message to the buffer
+			outputStream.write(msg.getBytes(charset));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-        // OUTPUTSTREAM
-        outputStream = new DiscardingRollingOutputStream(
-                maxBucketSizeInKilobytes * 1024,
-                maxNumberOfBuckets) {
-            @Override
-            protected void onBucketDiscard(ByteArrayOutputStream discardedBucket) {
-                if (isDebug()) {
-                    addInfo("Discard bucket - " + getDebugInfo());
-                }
-                String s = new Timestamp(System.currentTimeMillis()) + " - OutputStream is full, discard previous logs" + LINE_SEPARATOR;
-                try {
-                    getFilledBuckets().peekLast().write(s.getBytes());
-                    addWarn(s);
-                } catch (IOException e) {
-                    addWarn("Exception appending warning message '" + s + "'", e);
-                }
-            }
+	@Override
+	public void start() {
 
-            @Override
-            protected void onBucketRoll(ByteArrayOutputStream rolledBucket) {
-                if (isDebug()) {
-                    addInfo("Roll bucket - " + getDebugInfo());
-                }
-            }
+		// OUTPUTSTREAM
+		outputStream = new DiscardingRollingOutputStream(
+				maxBucketSizeInKilobytes * 1024,
+				maxNumberOfBuckets) {
+			@Override
+			protected void onBucketDiscard(ByteArrayOutputStream discardedBucket) {
+				if (isDebug()) {
+					addInfo("Discard bucket - " + getDebugInfo());
+				}
+				String s = new Timestamp(System.currentTimeMillis()) + " - OutputStream is full, discard previous logs" + LINE_SEPARATOR;
+				try {
+					getFilledBuckets().peekLast().write(s.getBytes());
+					addWarn(s);
+				} catch (IOException e) {
+					addWarn("Exception appending warning message '" + s + "'", e);
+				}
+			}
 
-        };
+			@Override
+			protected void onBucketRoll(ByteArrayOutputStream rolledBucket) {
+				if (isDebug()) {
+					addInfo("Roll bucket - " + getDebugInfo());
+				}
+			}
 
-        // SCHEDULER
-        ThreadFactory threadFactory = new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = Executors.defaultThreadFactory().newThread(r);
-                thread.setName("logback-loggly-appender");
-                thread.setDaemon(true);
-                return thread;
-            }
-        };
-        scheduledExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
-        scheduledExecutor.scheduleWithFixedDelay(new LogglyExporter(), flushIntervalInSeconds, flushIntervalInSeconds, TimeUnit.SECONDS);
+		};
 
-        // MONITORING
-        if (jmxMonitoring) {
-            String objectName = "ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@" + System.identityHashCode(this);
-            try {
-                registeredObjectName = mbeanServer.registerMBean(this, new ObjectName(objectName)).getObjectName();
-            } catch (Exception e) {
-                addWarn("Exception registering mbean '" + objectName + "'", e);
-            }
-        }
+		// SCHEDULER
+		ThreadFactory threadFactory = new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread thread = Executors.defaultThreadFactory().newThread(r);
+				thread.setName("logback-loggly-appender");
+				thread.setDaemon(true);
+				return thread;
+			}
+		};
+		scheduledExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
+		scheduledExecutor.scheduleWithFixedDelay(new LogglyExporter(), flushIntervalInSeconds, flushIntervalInSeconds, TimeUnit.SECONDS);
 
-        // super.setOutputStream() must be defined before calling super.start()
-        super.start();
-    }
+		// MONITORING
+		if (jmxMonitoring) {
+			String objectName = "ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@" + System.identityHashCode(this);
+			try {
+				registeredObjectName = mbeanServer.registerMBean(this, new ObjectName(objectName)).getObjectName();
+			} catch (Exception e) {
+				addWarn("Exception registering mbean '" + objectName + "'", e);
+			}
+		}
 
-    @Override
-    public void stop() {
-        scheduledExecutor.shutdown();
+		// super.setOutputStream() must be defined before calling super.start()
+		super.start();
+	}
 
-        processLogEntries();
+	@Override
+	public void stop() {
+		scheduledExecutor.shutdown();
 
-        if (registeredObjectName != null) {
-            try {
-                mbeanServer.unregisterMBean(registeredObjectName);
-            } catch (Exception e) {
-                addWarn("Exception unRegistering mbean " + registeredObjectName, e);
-            }
-        }
+		processLogEntries();
 
-        try {
-            scheduledExecutor.awaitTermination(2 * this.flushIntervalInSeconds, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            addWarn("Exception waiting for termination of LogglyAppender scheduler", e);
-        }
+		if (registeredObjectName != null) {
+			try {
+				mbeanServer.unregisterMBean(registeredObjectName);
+			} catch (Exception e) {
+				addWarn("Exception unRegistering mbean " + registeredObjectName, e);
+			}
+		}
 
-        // stop appender (ie close outputStream) after sending it to Loggly
-        outputStream.close();
+		try {
+			scheduledExecutor.awaitTermination(2 * this.flushIntervalInSeconds, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			addWarn("Exception waiting for termination of LogglyAppender scheduler", e);
+		}
 
-        super.stop();
-    }
+		// stop appender (ie close outputStream) after sending it to Loggly
+		outputStream.close();
 
-    /**
-     * Send log entries to Loggly
-     */
-    @Override
-    public void processLogEntries() {
-        if (isDebug()) {
-            addInfo("Process log entries - " + getDebugInfo());
-        }
+		super.stop();
+	}
 
-        outputStream.rollCurrentBucketIfNotEmpty();
-        BlockingDeque<ByteArrayOutputStream> filledBuckets = outputStream.getFilledBuckets();
+	/**
+	 * Send log entries to Loggly
+	 */
+	@Override
+	public void processLogEntries() {
+		if (isDebug()) {
+			addInfo("Process log entries - " + getDebugInfo());
+		}
 
-        ByteArrayOutputStream bucket;
+		outputStream.rollCurrentBucketIfNotEmpty();
+		BlockingDeque<ByteArrayOutputStream> filledBuckets = outputStream.getFilledBuckets();
 
-        while ((bucket = filledBuckets.poll()) != null) {
-            try {
-                InputStream in = new ByteArrayInputStream(bucket.toByteArray());
-                processLogEntries(in);
-            } catch (Exception e) {
-                addWarn("Internal error", e);
-            }
-            outputStream.recycleBucket(bucket);
-        }
-    }
+		ByteArrayOutputStream bucket;
 
-    /**
-     * Creates a configured HTTP connection to a URL (does not open the
-     * connection)
-     *
-     * @param url target URL
-     * @return the newly created HTTP connection
-     * @throws IOException
-     */
-    protected HttpURLConnection getHttpConnection(URL url) throws IOException {
-        HttpURLConnection conn;
-        if (proxy == null) {
-            conn = (HttpURLConnection) url.openConnection();
-        } else {
-            conn = (HttpURLConnection) url.openConnection(proxy);
-        }
+		while ((bucket = filledBuckets.poll()) != null) {
+			try {
+				InputStream in = new ByteArrayInputStream(bucket.toByteArray());
+				processLogEntries(in);
+			} catch (Exception e) {
+				addWarn("Internal error", e);
+			}
+			outputStream.recycleBucket(bucket);
+		}
+	}
 
-        conn.setDoOutput(true);
-        conn.setDoInput(true);
-        conn.setRequestProperty("Content-Type", layout.getContentType() + "; charset=" + charset.name());
-        conn.setRequestMethod("POST");
-        conn.setReadTimeout(getHttpReadTimeoutInMillis());
-        return conn;
-    }
+	/**
+	 * Creates a configured HTTP connection to a URL (does not open the connection)
+	 * 
+	 * @param url target URL
+	 * @return the newly created HTTP connection
+	 * @throws IOException
+	 */
+	protected HttpURLConnection getHttpConnection(URL url) throws IOException {
+		HttpURLConnection conn;
+		if (proxy == null) {
+			conn = (HttpURLConnection) url.openConnection();
+		} else {
+			conn = (HttpURLConnection) url.openConnection(proxy);
+		}
 
-    /**
-     * Send log entries to Loggly
-     */
-    protected void processLogEntries(InputStream in) throws IOException {
-        long nanosBefore = System.nanoTime();
-        try {
+		conn.setDoOutput(true);
+		conn.setDoInput(true);
+		conn.setRequestProperty("Content-Type", layout.getContentType() + "; charset=" + charset.name());
+		conn.setRequestMethod("POST");
+		conn.setReadTimeout(getHttpReadTimeoutInMillis());
+		return conn;
+	}
 
-            HttpURLConnection conn = getHttpConnection(new URL(endpointUrl));
-            BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());
+	/**
+	 * Send log entries to Loggly
+	 */
+	protected void processLogEntries(InputStream in) throws IOException {
+		long nanosBefore = System.nanoTime();
+		try {
 
-            long len = IoUtils.copy(in, out);
-            sentBytes.addAndGet(len);
+			HttpURLConnection conn = getHttpConnection(new URL(endpointUrl));
+			BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());
 
-            out.flush();
-            out.close();
+			long len = IoUtils.copy(in, out);
+			sentBytes.addAndGet(len);
 
-            int responseCode = conn.getResponseCode();
-            String response = super.readResponseBody(conn.getInputStream());
-            switch (responseCode) {
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_ACCEPTED:
-                    sendSuccessCount.incrementAndGet();
-                    break;
-                default:
-                    sendExceptionCount.incrementAndGet();
-                    addError("LogglyAppender server-side exception: " + responseCode + ": " + response);
-            }
-            // force url connection recycling
-            try {
-                conn.getInputStream().close();
-                conn.disconnect();
-            } catch (Exception e) {
-                // swallow exception
-            }
-        } catch (Exception e) {
-            sendExceptionCount.incrementAndGet();
-            addError("LogglyAppender client-side exception", e);
-        } finally {
-            sendDurationInNanos.addAndGet(System.nanoTime() - nanosBefore);
-        }
-    }
+			out.flush();
+			out.close();
 
-    public int getFlushIntervalInSeconds() {
-        return flushIntervalInSeconds;
-    }
+			int responseCode = conn.getResponseCode();
+			String response = super.readResponseBody(conn.getInputStream());
+			switch (responseCode) {
+				case HttpURLConnection.HTTP_OK:
+				case HttpURLConnection.HTTP_ACCEPTED:
+					sendSuccessCount.incrementAndGet();
+					break;
+				default:
+					sendExceptionCount.incrementAndGet();
+					addError("LogglyAppender server-side exception: " + responseCode + ": " + response);
+			}
+			// force url connection recycling
+			try {
+				conn.getInputStream().close();
+				conn.disconnect();
+			} catch (Exception e) {
+				// swallow exception
+			}
+		} catch (Exception e) {
+			sendExceptionCount.incrementAndGet();
+			addError("LogglyAppender client-side exception", e);
+		} finally {
+			sendDurationInNanos.addAndGet(System.nanoTime() - nanosBefore);
+		}
+	}
 
-    public void setFlushIntervalInSeconds(int flushIntervalInSeconds) {
-        this.flushIntervalInSeconds = flushIntervalInSeconds;
-    }
+	public int getFlushIntervalInSeconds() {
+		return flushIntervalInSeconds;
+	}
 
-    @Override
-    public long getSentBytes() {
-        return sentBytes.get();
-    }
+	public void setFlushIntervalInSeconds(int flushIntervalInSeconds) {
+		this.flushIntervalInSeconds = flushIntervalInSeconds;
+	}
 
-    @Override
-    public long getSendDurationInNanos() {
-        return sendDurationInNanos.get();
-    }
+	@Override
+	public long getSentBytes() {
+		return sentBytes.get();
+	}
 
-    @Override
-    public int getSendSuccessCount() {
-        return sendSuccessCount.get();
-    }
+	@Override
+	public long getSendDurationInNanos() {
+		return sendDurationInNanos.get();
+	}
 
-    @Override
-    public int getSendExceptionCount() {
-        return sendExceptionCount.get();
-    }
+	@Override
+	public int getSendSuccessCount() {
+		return sendSuccessCount.get();
+	}
 
-    @Override
-    public int getDiscardedBucketsCount() {
-        return outputStream.getDiscardedBucketCount();
-    }
+	@Override
+	public int getSendExceptionCount() {
+		return sendExceptionCount.get();
+	}
 
-    @Override
-    public long getCurrentLogEntriesBufferSizeInBytes() {
-        return outputStream.getCurrentOutputStreamSize();
-    }
+	@Override
+	public int getDiscardedBucketsCount() {
+		return outputStream.getDiscardedBucketCount();
+	}
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
+	@Override
+	public long getCurrentLogEntriesBufferSizeInBytes() {
+		return outputStream.getCurrentOutputStreamSize();
+	}
 
-    public boolean isDebug() {
-        return debug;
-    }
+	@Override
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
 
-    public void setJmxMonitoring(boolean jmxMonitoring) {
-        this.jmxMonitoring = jmxMonitoring;
-    }
+	@Override
+	public boolean isDebug() {
+		return debug;
+	}
 
-    public void setMbeanServer(MBeanServer mbeanServer) {
-        this.mbeanServer = mbeanServer;
-    }
+	public void setJmxMonitoring(boolean jmxMonitoring) {
+		this.jmxMonitoring = jmxMonitoring;
+	}
 
-    public void setMaxNumberOfBuckets(int maxNumberOfBuckets) {
-        this.maxNumberOfBuckets = maxNumberOfBuckets;
-    }
+	public void setMbeanServer(MBeanServer mbeanServer) {
+		this.mbeanServer = mbeanServer;
+	}
 
-    public void setMaxBucketSizeInKilobytes(int maxBucketSizeInKilobytes) {
-        this.maxBucketSizeInKilobytes = maxBucketSizeInKilobytes;
-    }
+	public void setMaxNumberOfBuckets(int maxNumberOfBuckets) {
+		this.maxNumberOfBuckets = maxNumberOfBuckets;
+	}
 
-    private String getDebugInfo() {
-        return "{" +
-                "sendDurationInMillis=" + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS) +
-                ", sendSuccessCount=" + sendSuccessCount +
-                ", sendExceptionCount=" + sendExceptionCount +
-                ", sentBytes=" + sentBytes +
-                ", discardedBucketsCount=" + getDiscardedBucketsCount() +
-                ", currentLogEntriesBufferSizeInBytes=" + getCurrentLogEntriesBufferSizeInBytes() +
-                '}';
-    }
+	public void setMaxBucketSizeInKilobytes(int maxBucketSizeInKilobytes) {
+		this.maxBucketSizeInKilobytes = maxBucketSizeInKilobytes;
+	}
 
-    public class LogglyExporter implements Runnable {
-        @Override
-        public void run() {
-            try {
-                processLogEntries();
-            } catch (Exception e) {
-                addWarn("Exception processing log entries", e);
-            }
-        }
-    }
+	private String getDebugInfo() {
+		return "{" +
+				"sendDurationInMillis=" + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS) +
+				", sendSuccessCount=" + sendSuccessCount +
+				", sendExceptionCount=" + sendExceptionCount +
+				", sentBytes=" + sentBytes +
+				", discardedBucketsCount=" + getDiscardedBucketsCount() +
+				", currentLogEntriesBufferSizeInBytes=" + getCurrentLogEntriesBufferSizeInBytes() +
+				'}';
+	}
+
+	public class LogglyExporter implements Runnable {
+		@Override
+		public void run() {
+			try {
+				processLogEntries();
+			} catch (Exception e) {
+				addWarn("Exception processing log entries", e);
+			}
+		}
+	}
 }
