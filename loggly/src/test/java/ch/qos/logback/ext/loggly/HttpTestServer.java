@@ -100,6 +100,7 @@ public class HttpTestServer implements Container {
         } catch (InterruptedException e) {
         }
       }
+      System.out.println("requests " + requestCount() + "/" + count);
     }
   }
 
