@@ -41,14 +41,11 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <p>
  * <a href="http://logback.qos.ch/">Logback</a> batch appender for <a href="http://www.loggly.com/">Loggly</a> HTTP API</a>.
  * </p>
- * <p>
- * <strong>Note:</strong>Loggly's Syslog API is much more scalable than the HTTP API which should mostly be used in low-volume or non-production systems. The
- * HTTP API can be very convenient to workaround firewalls.
- * </p>
- * <p>
- * If the {@link LogglyBatchAppender} saturates and discards log messages, the following warning message is appended to both Loggly and {@link System#err}: <br/>
- * "<code>$date - OutputStream is full, discard previous logs</code>"
- * </p>
+ * <p><strong>Note:</strong>Loggly's Syslog API is much more scalable than the HTTP API which should mostly be used in
+ * low-volume or non-production systems. The HTTP API can be very convenient to workaround firewalls.</p>
+ * <p>If the {@link LogglyBatchAppender} saturates and discards log messages, the following warning message is
+ * appended to both Loggly and {@link System#err}: <br/>
+ * "<code>$date - OutputStream is full, discard previous logs</code>"</p>
  * <h2>Configuration settings</h2>
  * <table>
  * <tr>
@@ -59,18 +56,20 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <tr>
  * <td>inputKey</td>
  * <td>String</td>
- * <td>Loggly input key. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample "<code>12345678-90ab-cdef-1234-567890abcdef</code>"</td>
+ * <td>Loggly input key. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample
+ * "<code>12345678-90ab-cdef-1234-567890abcdef</code>"</td>
  * </tr>
  * <tr>
  * <td>endpointUrl</td>
  * <td>String</td>
- * <td>Loggly HTTP API endpoint URL. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample: "
- * <code>https://logs.loggly.com/inputs/12345678-90ab-cdef-1234-567890abcdef</code>"</td>
+ * <td>Loggly HTTP API endpoint URL. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample:
+ * "<code>https://logs.loggly.com/inputs/12345678-90ab-cdef-1234-567890abcdef</code>"</td>
  * </tr>
  * <tr>
  * <td>pattern</td>
  * <td>String</td>
- * <td>Pattern used for Loggly log messages. Default value is: <code>%d{"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",UTC} %-5level [%thread] %logger: %m%n</code>.</td>
+ * <td>Pattern used for Loggly log messages. Default value is:
+ * <code>%d{"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",UTC} %-5level [%thread] %logger: %m%n</code>.</td>
  * </tr>
  * <tr>
  * <td>proxyHost</td>
@@ -85,8 +84,8 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <tr>
  * <td>jmxMonitoring</td>
  * <td>boolean</td>
- * <td>Enable registration of a monitoring MBean named "<code>ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@#hashcode#</code>". Default:
- * <code>true</code>.</td>
+ * <td>Enable registration of a monitoring MBean named
+ * "<code>ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@#hashcode#</code>". Default: <code>true</code>.</td>
  * </tr>
  * <tr>
  * <td>maxNumberOfBuckets</td>
@@ -104,13 +103,11 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <td>Interval of the buffer flush to Loggly API. Default value: <code>3</code>.</td>
  * </tr>
  * </table>
- * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each, which seems very reasonable even for small JVMs. If logs are discarded, try
- * first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
+ * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each, which seems very reasonable even for small JVMs.
+ * If logs are discarded, try first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
  * <p/>
  * <h2>Configuration Sample</h2>
- * 
- * <pre>
- * <code>
+ * <pre><code>
  * &lt;configuration scan="true" scanPeriod="30 seconds" debug="true"&gt;
  *   &lt;if condition='isDefined("logback.loggly.inputKey")'&gt;
  *     &lt;then&gt;
@@ -127,20 +124,20 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  *     &lt;/then&gt;
  *   &lt;/if&gt;
  * &lt;/configuration&gt;
- * </code>
- * </pre>
- * 
+ * </code></pre>
  * </p>
  * <p/>
  * <h2>Implementation decisions</h2>
  * <ul>
- * <li>Why buffer the generated log messages as bytes instead of using the {@link ch.qos.logback.core.read.CyclicBufferAppender} and buffering the
- * {@link ch.qos.logback.classic.spi.ILoggingEvent} ? Because it is much easier to control the size in memory</li>
+ * <li>Why buffer the generated log messages as bytes instead of using the
+ * {@link ch.qos.logback.core.read.CyclicBufferAppender} and buffering the {@link ch.qos.logback.classic.spi.ILoggingEvent} ?
+ * Because it is much easier to control the size in memory</li>
  * <li>
- * Why buffer in a byte array instead of directly writing in a {@link BufferedOutputStream} on the {@link HttpURLConnection} ? Because the Loggly API may not
- * like such kind of streaming approach.</li>
+ * Why buffer in a byte array instead of directly writing in a {@link BufferedOutputStream} on the {@link HttpURLConnection} ?
+ * Because the Loggly API may not like such kind of streaming approach.
+ * </li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  */
 public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements LogglyBatchAppenderMBean {

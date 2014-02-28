@@ -26,25 +26,22 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
- * Capped in-memory {@linkplain OutputStream} composed of a chain of
- * {@linkplain ByteArrayOutputStream} called 'buckets'.
+ * Capped in-memory {@linkplain OutputStream} composed of a chain of {@linkplain ByteArrayOutputStream} called 'buckets'.
  * </p>
  * <p>
- * Each 'bucket' is limited in size (see {@link #maxBucketSizeInBytes}) and the
- * total size of the {@linkplain OutputStream} is bounded thanks to a discarding
- * policy. An external component is expected to consume the filled buckets
- * thanks to {@link #getFilledBuckets()}.
+ * Each 'bucket' is limited in size (see {@link #maxBucketSizeInBytes}) and the total size of the {@linkplain OutputStream}
+ * is bounded thanks to a discarding policy. An external component is expected to consume the filled buckets thanks to
+ * {@link #getFilledBuckets()}.
  * </p>
  * <p>
  * Implementation decisions:
  * </p>
  * <ul>
- * <li>Why in-memory without offload on disk: offload on disk was possible with
- * Google Guava's <code>FileBackedOutputStream</code> but had the drawback to
- * introduce a dependency. Loggly batch appender use case should be OK with a
- * pure in-memory approach.</li>
+ * <li>Why in-memory without offload on disk: offload on disk was possible with Google Guava's
+ * <code>FileBackedOutputStream</code> but had the drawback to introduce a dependency. Loggly batch appender use case
+ * should be OK with a pure in-memory approach.</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  */
 public class DiscardingRollingOutputStream extends OutputStream {
