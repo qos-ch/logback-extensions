@@ -20,7 +20,9 @@ import java.util.Random;
 
 import junit.framework.Assert;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Unit tests for the {@link DiscardingRollingOutputStream} size and peek
@@ -32,6 +34,9 @@ public class DiscardingRollingOutputStreamTest {
 
     private static final int maxBucketSizeInBytes = 90;
     private static final int maxBucketCount = 5;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     /**
      * Ensures that the buffer size calculation works as expected
@@ -62,11 +67,25 @@ public class DiscardingRollingOutputStreamTest {
      * Ensures that an exception is thrown if we try to peek past the end of the
      * stream
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void bufferPeekEmptyThrowsExceptionTest() {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
+        thrown.expect(IllegalArgumentException.class);
         outputStream.peek(100);
+        outputStream.close();
+    }
+
+    /**
+     * Ensures that an exception is thrown if we try to peek past the start of
+     * the stream
+     */
+    @Test
+    public void bufferPeekNegativeThrowsExceptionTest() {
+        DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
+                maxBucketCount);
+        thrown.expect(ArrayIndexOutOfBoundsException.class);
+        outputStream.peek(-1);
         outputStream.close();
     }
 
@@ -132,10 +151,11 @@ public class DiscardingRollingOutputStreamTest {
      * Ensures that an exception is thrown if we try to peek past the end of the
      * stream
      */
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test
     public void bufferPeekFirstWhileEmptyThrowsExceptionTest() {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
+        thrown.expect(ArrayIndexOutOfBoundsException.class);
         outputStream.peekFirst();
         outputStream.close();
     }
@@ -204,10 +224,11 @@ public class DiscardingRollingOutputStreamTest {
      * Ensures that an exception is thrown if we try to peek past the end of the
      * stream
      */
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test
     public void bufferPeekLastWhenEmptyThrowsExceptionTest() {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
+        thrown.expect(ArrayIndexOutOfBoundsException.class);
         outputStream.peekLast();
         outputStream.close();
     }
