@@ -171,7 +171,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     private int maxBucketSizeInKilobytes = 1024;
 
     private Charset charset = Charset.forName("UTF-8");
-    private byte utf8LineFeed = 0x0A;
+    private byte utf8LineFeed = 0x0A; //if charset is changed to UTF-16, the value of this variable needs to be changed to 0x000A.
 
     @Override
     protected void append(E eventObject) {
