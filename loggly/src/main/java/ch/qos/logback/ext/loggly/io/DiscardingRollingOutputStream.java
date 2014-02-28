@@ -70,12 +70,11 @@ public class DiscardingRollingOutputStream extends OutputStream {
         }
 
         this.maxBucketSizeInBytes = maxBucketSizeInBytes;
-        this.filledBuckets = new LinkedBlockingDeque<ByteArrayOutputStream>(maxBucketCount);
+        filledBuckets = new LinkedBlockingDeque<ByteArrayOutputStream>(maxBucketCount);
 
-        this.recycledBucketPool = new ConcurrentLinkedQueue<ByteArrayOutputStream>();
-        this.currentBucket = newBucket();
+        recycledBucketPool = new ConcurrentLinkedQueue<ByteArrayOutputStream>();
+        currentBucket = newBucket();
     }
-
 
     @Override
     public void write(int b) throws IOException {
@@ -121,7 +120,8 @@ public class DiscardingRollingOutputStream extends OutputStream {
     }
 
     /**
-     * Close all the underlying buckets (current bucket, filled buckets and buckets from the recycled buckets pool).
+     * Close all the underlying buckets (current bucket, filled buckets and
+     * buckets from the recycled buckets pool).
      */
     @Override
     public void close() {
@@ -149,9 +149,11 @@ public class DiscardingRollingOutputStream extends OutputStream {
     }
 
     /**
-     * Moves the current active bucket to the list of filled buckets and defines a new one.
+     * Moves the current active bucket to the list of filled buckets and defines
+     * a new one.
      * <p/>
-     * The new active bucket is reused from the {@link #recycledBucketPool} pool if one is available or recreated.
+     * The new active bucket is reused from the {@link #recycledBucketPool} pool
+     * if one is available or recreated.
      */
     public void rollCurrentBucket() {
         currentBucketLock.lock();
@@ -171,9 +173,116 @@ public class DiscardingRollingOutputStream extends OutputStream {
     }
 
     /**
+     * Returns the current size of the buffer, including the active bucket and
+     * all filled buckets.
+     * 
+     * @return the current size of the buffer
+     */
+    public long size() {
+        currentBucketLock.lock();
+        try {
+            long size = currentBucket.size();
+            for (java.io.ByteArrayOutputStream b : filledBuckets) {
+                size += b.size();
+            }
+            return size;
+        } finally {
+            currentBucketLock.unlock();
+        }
+    }
+
+    /**
+     * Returns true if the buffer is currently empty. This implementation is
+     * more efficient than size() > 0 if the number of buckets is large.
+     * 
+     * @return true if the buffer is currently empty.
+     */
+    public boolean isEmpty() {
+        currentBucketLock.lock();
+        try {
+            return currentBucket.size() == 0 && filledBuckets.size() == 0;
+        } finally {
+            currentBucketLock.unlock();
+        }
+    }
+
+    /**
+     * Returns the byte at the specified position in the buffer.
+     * 
+     * @param position
+     *            the zero-based position of the byte to look at. The first byte
+     *            is at position = 0, and the last byte is at position = size()
+     *            -1
+     * @return the byte at the specified position of the buffer
+     */
+    public byte peek(long position) {
+        currentBucketLock.lock();
+        try {
+            // look for the target byte in the filled buckets
+            for (java.io.ByteArrayOutputStream b : filledBuckets) {
+                if (position >= b.size()) {
+                    position -= b.size();
+                } else {
+                    return b.toByteArray()[(int) position];
+                }
+            }
+
+            // look for the target byte in the active bucket
+            if (position >= currentBucket.size()) {
+                throw new IllegalArgumentException("Can't peek past the end of the stream.");
+            } else {
+                return currentBucket.toByteArray()[(int) position];
+            }
+        } finally {
+            currentBucketLock.unlock();
+        }
+    }
+
+    /**
+     * Returns the first byte in the buffer
+     * 
+     * @throws ArrayIndexOutOfBoundsException
+     *             if the buffer is empty
+     */
+    public byte peekFirst() {
+        currentBucketLock.lock();
+        try {
+            if (filledBuckets.size() > 0) {
+                return filledBuckets.peekFirst().toByteArray()[0];
+            } else {
+                return currentBucket.toByteArray()[0];
+            }
+        } finally {
+            currentBucketLock.unlock();
+        }
+    }
+
+    /**
+     * Returns the last byte in the buffer
+     * 
+     * @throws ArrayIndexOutOfBoundsException
+     *             if the buffer is empty
+     */
+    public byte peekLast() {
+        currentBucketLock.lock();
+        try {
+            if (currentBucket.size() > 0) {
+                return currentBucket.toByteArray()[currentBucket.size() - 1];
+            } else if (filledBuckets.size() > 0) {
+                return filledBuckets.peekLast().toByteArray()[filledBuckets.peekLast().size() - 1];
+            } else {
+                throw new ArrayIndexOutOfBoundsException();
+            }
+        } finally {
+            currentBucketLock.unlock();
+        }
+    }
+
+    /**
      * Designed for extension.
-     *
-     * @param discardedBucket the discarded bucket
+     * 
+     * @param discardedBucket
+     *            the discarded bucket
      */
     protected void onBucketDiscard(ByteArrayOutputStream discardedBucket) {
 
@@ -181,17 +290,18 @@ public class DiscardingRollingOutputStream extends OutputStream {
 
     /**
      * The rolled bucket. Designed for extension.
-     *
-     * @param rolledBucket the discarded bucket
+     * 
+     * @param rolledBucket
+     *            the discarded bucket
      */
     protected void onBucketRoll(ByteArrayOutputStream rolledBucket) {
 
     }
 
     /**
-     * Get a new bucket from the {@link #recycledBucketPool} or instantiate a new one if none available
-     * in the free bucket pool.
-     *
+     * Get a new bucket from the {@link #recycledBucketPool} or instantiate a
+     * new one if none available in the free bucket pool.
+     * 
      * @return the bucket ready to use
      */
     protected ByteArrayOutputStream newBucket() {
@@ -204,8 +314,9 @@ public class DiscardingRollingOutputStream extends OutputStream {
 
     /**
      * Returns the given bucket to the pool of free buckets.
-     *
-     * @param bucket the bucket to recycle
+     * 
+     * @param bucket
+     *            the bucket to recycle
      */
     public void recycleBucket(ByteArrayOutputStream bucket) {
         bucket.reset();
@@ -237,11 +348,8 @@ public class DiscardingRollingOutputStream extends OutputStream {
 
     @Override
     public String toString() {
-        return "DiscardingRollingOutputStream{" +
-                "currentBucket.bytesWritten=" + currentBucket.size() +
-                ", filledBuckets.size=" + filledBuckets.size() +
-                ", discardedBucketCount=" + discardedBucketCount +
-                ", recycledBucketPool.size=" + recycledBucketPool.size() +
-                '}';
+        return "DiscardingRollingOutputStream{" + "currentBucket.bytesWritten=" + currentBucket.size()
+                + ", filledBuckets.size=" + filledBuckets.size() + ", discardedBucketCount=" + discardedBucketCount
+                + ", recycledBucketPool.size=" + recycledBucketPool.size() + '}';
     }
 }

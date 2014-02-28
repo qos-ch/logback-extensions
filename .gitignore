@@ -8,3 +8,4 @@
 .settings
 target
 out
+loggly/test-output/*

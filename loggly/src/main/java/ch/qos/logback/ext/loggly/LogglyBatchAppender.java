@@ -171,14 +171,22 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     private int maxBucketSizeInKilobytes = 1024;
 
     private Charset charset = Charset.forName("UTF-8");
+    private byte utf8LineFeed = 0x0A; //if charset is changed to UTF-16, the value of this variable needs to be changed to 0x000A.
 
     @Override
     protected void append(E eventObject) {
         if (!isStarted()) {
             return;
         }
-        String msg = this.layout.doLayout(eventObject);
+        String msg = layout.doLayout(eventObject);
         try {
+            //if the buffer is not empty and the last byte isn't a newline character, then we'll need to insert one so 
+            //that loggly interprets the batch contents as individual events. this is important when using JSON events.
+            if (!outputStream.isEmpty() && outputStream.peekLast() != utf8LineFeed) {
+                outputStream.write(utf8LineFeed);
+            }
+
+            //write the intended message to the buffer
             outputStream.write(msg.getBytes(charset));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -189,15 +197,14 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     public void start() {
 
         // OUTPUTSTREAM
-        outputStream = new DiscardingRollingOutputStream(
-                maxBucketSizeInKilobytes * 1024,
-                maxNumberOfBuckets) {
+        outputStream = new DiscardingRollingOutputStream(maxBucketSizeInKilobytes * 1024, maxNumberOfBuckets) {
             @Override
             protected void onBucketDiscard(ByteArrayOutputStream discardedBucket) {
                 if (isDebug()) {
                     addInfo("Discard bucket - " + getDebugInfo());
                 }
-                String s = new Timestamp(System.currentTimeMillis()) + " - OutputStream is full, discard previous logs" + LINE_SEPARATOR;
+                String s = new Timestamp(System.currentTimeMillis()) + " - OutputStream is full, discard previous logs"
+                        + LINE_SEPARATOR;
                 try {
                     getFilledBuckets().peekLast().write(s.getBytes());
                     addWarn(s);
@@ -226,11 +233,13 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
             }
         };
         scheduledExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
-        scheduledExecutor.scheduleWithFixedDelay(new LogglyExporter(), flushIntervalInSeconds, flushIntervalInSeconds, TimeUnit.SECONDS);
+        scheduledExecutor.scheduleWithFixedDelay(new LogglyExporter(), flushIntervalInSeconds, flushIntervalInSeconds,
+                TimeUnit.SECONDS);
 
         // MONITORING
         if (jmxMonitoring) {
-            String objectName = "ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@" + System.identityHashCode(this);
+            String objectName = "ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@"
+                    + System.identityHashCode(this);
             try {
                 registeredObjectName = mbeanServer.registerMBean(this, new ObjectName(objectName)).getObjectName();
             } catch (Exception e) {
@@ -294,9 +303,8 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     }
 
     /**
-     * Creates a configured HTTP connection to a URL (does not open the
-     * connection)
-     *
+     * Creates a configured HTTP connection to a URL (does not open the connection)
+     * 
      * @param url target URL
      * @return the newly created HTTP connection
      * @throws IOException
@@ -336,13 +344,13 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
             int responseCode = conn.getResponseCode();
             String response = super.readResponseBody(conn.getInputStream());
             switch (responseCode) {
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_ACCEPTED:
-                    sendSuccessCount.incrementAndGet();
-                    break;
-                default:
-                    sendExceptionCount.incrementAndGet();
-                    addError("LogglyAppender server-side exception: " + responseCode + ": " + response);
+            case HttpURLConnection.HTTP_OK:
+            case HttpURLConnection.HTTP_ACCEPTED:
+                sendSuccessCount.incrementAndGet();
+                break;
+            default:
+                sendExceptionCount.incrementAndGet();
+                addError("LogglyAppender server-side exception: " + responseCode + ": " + response);
             }
             // force url connection recycling
             try {
@@ -397,10 +405,12 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         return outputStream.getCurrentOutputStreamSize();
     }
 
+    @Override
     public void setDebug(boolean debug) {
         this.debug = debug;
     }
 
+    @Override
     public boolean isDebug() {
         return debug;
     }
@@ -422,14 +432,11 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     }
 
     private String getDebugInfo() {
-        return "{" +
-                "sendDurationInMillis=" + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS) +
-                ", sendSuccessCount=" + sendSuccessCount +
-                ", sendExceptionCount=" + sendExceptionCount +
-                ", sentBytes=" + sentBytes +
-                ", discardedBucketsCount=" + getDiscardedBucketsCount() +
-                ", currentLogEntriesBufferSizeInBytes=" + getCurrentLogEntriesBufferSizeInBytes() +
-                '}';
+        return "{" + "sendDurationInMillis="
+                + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS)
+                + ", sendSuccessCount=" + sendSuccessCount + ", sendExceptionCount=" + sendExceptionCount
+                + ", sentBytes=" + sentBytes + ", discardedBucketsCount=" + getDiscardedBucketsCount()
+                + ", currentLogEntriesBufferSizeInBytes=" + getCurrentLogEntriesBufferSizeInBytes() + '}';
     }
 
     public class LogglyExporter implements Runnable {
