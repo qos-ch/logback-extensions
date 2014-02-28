@@ -39,7 +39,7 @@ public class DiscardingRollingOutputStreamTest {
      * @throws IOException
      */
     @Test
-    public void bufferSizeTest() throws IOException {
+    public void bufferSizeCalculationTest() throws IOException {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
 
@@ -63,7 +63,7 @@ public class DiscardingRollingOutputStreamTest {
      * stream
      */
     @Test(expected = IllegalArgumentException.class)
-    public void bufferPeekExceptionTest() {
+    public void bufferPeekEmptyThrowsExceptionTest() {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
         outputStream.peek(100);
@@ -133,7 +133,7 @@ public class DiscardingRollingOutputStreamTest {
      * stream
      */
     @Test(expected = ArrayIndexOutOfBoundsException.class)
-    public void bufferPeekFirstExceptionTest() {
+    public void bufferPeekFirstWhileEmptyThrowsExceptionTest() {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
         outputStream.peekFirst();
@@ -147,7 +147,7 @@ public class DiscardingRollingOutputStreamTest {
      * @throws IOException
      */
     @Test
-    public void bufferPeekFirstFilledBucketTest() throws IOException {
+    public void bufferPeekFirstSucceedsOnFilledBucketTest() throws IOException {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
 
@@ -177,7 +177,7 @@ public class DiscardingRollingOutputStreamTest {
      * @throws IOException
      */
     @Test
-    public void bufferPeekFirstActiveBucketTest() throws IOException {
+    public void bufferPeekFirstSucceedsOnActiveBucketTest() throws IOException {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
 
@@ -205,7 +205,7 @@ public class DiscardingRollingOutputStreamTest {
      * stream
      */
     @Test(expected = ArrayIndexOutOfBoundsException.class)
-    public void bufferPeekLastExceptionTest() {
+    public void bufferPeekLastWhenEmptyThrowsExceptionTest() {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
         outputStream.peekLast();
@@ -219,7 +219,7 @@ public class DiscardingRollingOutputStreamTest {
      * @throws IOException
      */
     @Test
-    public void bufferPeekLastFilledBucketTest() throws IOException {
+    public void bufferPeekLastWhenFilledBucketSucceedsTest() throws IOException {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
 
@@ -249,7 +249,7 @@ public class DiscardingRollingOutputStreamTest {
      * @throws IOException
      */
     @Test
-    public void bufferPeekLastActiveBucketTest() throws IOException {
+    public void bufferPeekLastWhenActiveBucketFilledSucceedsTest() throws IOException {
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
 
@@ -278,33 +278,65 @@ public class DiscardingRollingOutputStreamTest {
      * @throws IOException
      */
     @Test
-    public void isEmptyTest() throws IOException {
+    public void isEmptyReturnsTrueWhenBufferEmptyTest() throws IOException {
         // an empty stream should return true
         DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
                 maxBucketCount);
         Assert.assertTrue(outputStream.isEmpty());
+        outputStream.close();
+    }
 
+    /**
+     * Ensures that isEmpty functions as designed
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void isEmptyReturnsFalseWhenActiveBucketNotEmptyTest() throws IOException {
         // a single byte in the active buffer should return true
+        DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
+                maxBucketCount);
         byte[] data = new byte[] { 1 };
         outputStream.write(data);
         Assert.assertFalse(outputStream.isEmpty());
+        outputStream.close();
+    }
 
-        // add 89 more bytes to the buffer so that we have one filled bucket and
+    /**
+     * Ensures that isEmpty functions as designed
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void isEmptyReturnsFalseWithFilledBucketAndEmptyActiveBucketTest() throws IOException {
+        DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
+                maxBucketCount);
+        // add 90 bytes to the buffer so that we have one filled bucket and
         // an empty active bucket
         // should return false since we have some filled bucket
         Random r = new Random();
-        data = new byte[89];
+        byte[] data = new byte[90];
         r.nextBytes(data);
         outputStream.write(data);
         Assert.assertFalse(outputStream.isEmpty());
+        outputStream.close();
+    }
 
+    /**
+     * Ensures that isEmpty functions as designed
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void isEmptyReturnsFalseWithFilledBucketAndNonEmptyActiveBucketTest() throws IOException {
+        DiscardingRollingOutputStream outputStream = new DiscardingRollingOutputStream(maxBucketSizeInBytes,
+                maxBucketCount);
         // add another byte so that there's one byte in the active bucket as
         // well as a filled bucket
         // should return false since we have some filled bucket
-        data = new byte[] { 1 };
+        byte[] data = new byte[] { 1 };
         outputStream.write(data);
         Assert.assertFalse(outputStream.isEmpty());
-
         outputStream.close();
     }
 }
