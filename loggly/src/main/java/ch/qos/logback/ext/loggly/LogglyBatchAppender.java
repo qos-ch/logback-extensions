@@ -171,7 +171,6 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     private int maxBucketSizeInKilobytes = 1024;
 
     private Charset charset = Charset.forName("UTF-8");
-    private byte utf8LineFeed = 0x0A; // if charset is changed to UTF-16, the value of this variable needs to be changed to 0x000A.
 
     @Override
     protected void append(E eventObject) {
@@ -180,13 +179,6 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         }
         String msg = this.layout.doLayout(eventObject);
         try {
-            // if the buffer is not empty and the last byte isn't a newline character, then we'll need to insert one so
-            // that loggly interprets the batch contents as individual events. this is important when using JSON events.
-            if (!outputStream.isEmpty() && outputStream.peekLast() != utf8LineFeed) {
-                outputStream.write(utf8LineFeed);
-            }
-
-            // write the intended message to the buffer
             outputStream.write(msg.getBytes(charset));
         } catch (IOException e) {
             throw new RuntimeException(e);
