@@ -178,6 +178,13 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
             return;
         }
         String msg = this.layout.doLayout(eventObject);
+
+        // Issue #21: Make sure messages end with new-line to delimit
+        // individual log events within the batch sent to loggly.
+        if (!msg.endsWith("\n")) {
+          msg += "\n";
+        }
+
         try {
             outputStream.write(msg.getBytes(charset));
         } catch (IOException e) {
