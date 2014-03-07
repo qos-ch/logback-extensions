@@ -1,0 +1,20 @@
+Original author
+---------------
+
+Hazlewood, Les            <les[AT]hazlewood.com> {
+  Loggly Extension
+  Spring Extension
+}
+
+
+Contributors (alphabetical)
+---------------------------
+
+Gulcu, Ceki               <ceki[AT]qos.ch> {
+  Maintainer
+}
+
+Trinh, Anthony            <tony19[AT]gmail.com> {
+  Maintainer
+}
+
