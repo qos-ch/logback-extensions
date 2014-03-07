@@ -15,264 +15,265 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
 
-    <groupId>org.logback-extensions</groupId>
-    <artifactId>logback-ext-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>0.1.2-SNAPSHOT</version>
+  <groupId>org.logback-extensions</groupId>
+  <artifactId>logback-ext-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>0.1.2-SNAPSHOT</version>
 
-    <name>Logback Extensions</name>
-    <url>https://github.com/qos-ch/logback-extensions/wiki</url>
-    <description>
-        Logback Extensions provides community-driven and supported extensions to the Logback logging framework.
-    </description>
-    <inceptionYear>2012</inceptionYear>
+  <name>Logback Extensions</name>
+  <url>https://github.com/qos-ch/logback-extensions/wiki</url>
+  <description>
+    Logback Extensions provides community-driven and supported extensions to
+    the Logback logging framework.
+  </description>
+  <inceptionYear>2012</inceptionYear>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-    <scm>
-        <connection>scm:git:git://github.com/qos-ch/logback-extensions.git</connection>
-        <developerConnection>scm:git:git@github.com:qos-ch/logback-extensions.git</developerConnection>
-        <url>https://github.com/qos-ch/logback-extensions</url>
-    </scm>
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/qos-ch/logback-extensions/issues</url>
-    </issueManagement>
+  <scm>
+    <connection>scm:git:git://github.com/qos-ch/logback-extensions.git</connection>
+    <developerConnection>scm:git:git@github.com:qos-ch/logback-extensions.git</developerConnection>
+    <url>https://github.com/qos-ch/logback-extensions</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/qos-ch/logback-extensions/issues</url>
+  </issueManagement>
 
-    <developers>
-        <developer>
-            <id>lhazlewood</id>
-            <name>Les Hazlewood</name>
-            <email>les@hazlewood.com</email>
-            <url>http://www.leshazlewood.com</url>
-            <timezone>-8</timezone>
-        </developer>
-        <developer>
-            <id>belaso</id>
-            <name>Christian Trutz</name>
-            <email>christian.trutz@belaso.de</email>
-            <url>http://www.belaso.de</url>
-            <timezone>+2</timezone>
-        </developer>
-        <developer>
-            <id>tony19</id>
-            <name>Tony Trinh</name>
-            <email>tony19@gmail.com</email>
-            <url>http://tony19.github.com</url>
-            <timezone>-5</timezone>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <id>lhazlewood</id>
+      <name>Les Hazlewood</name>
+      <email>les@hazlewood.com</email>
+      <url>http://www.leshazlewood.com</url>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>belaso</id>
+      <name>Christian Trutz</name>
+      <email>christian.trutz@belaso.de</email>
+      <url>http://www.belaso.de</url>
+      <timezone>+2</timezone>
+    </developer>
+    <developer>
+      <id>tony19</id>
+      <name>Tony Trinh</name>
+      <email>tony19@gmail.com</email>
+      <url>http://tony19.github.com</url>
+      <timezone>-5</timezone>
+    </developer>
+  </developers>
 
-    <modules>
-        <module>loggly</module>
-        <module>spring</module>
-    </modules>
+  <modules>
+    <module>loggly</module>
+    <module>spring</module>
+  </modules>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Compile Dependencies: -->
-        <logback.version>1.1.1</logback.version>
+    <!-- Compile Dependencies: -->
+    <logback.version>1.1.1</logback.version>
 
-        <!-- redirect test output to a file in order to reduce noise -->
-        <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    </properties>
+    <!-- redirect test output to a file in order to reduce noise -->
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+  </properties>
+
+  <dependencies>
+    <!-- Test Dependencies for _all_ children modules: -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>1.9.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <dependencyManagement>
 
     <dependencies>
-        <!-- Test Dependencies for _all_ children modules: -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-    <dependencyManagement>
-
-        <dependencies>
 
 
-           <!-- Pool of dependencies available to any sub-module, but not included automatically.
+      <!-- Pool of dependencies available to any sub-module, but not included automatically.
                 They must be explicitly referenced in the children POMs, but _don't_ include
                 version numbers in the child POMs.  Define them here only to guarantee version
                 compatibility across children modules! -->
 
-            <!-- Logback Extensions sub-modules dependency .jars (alphabetized based on artifactId for easy scanning please!): -->
-          <dependency>
-               <groupId>ch.qos.logback</groupId>
-               <artifactId>logback-access</artifactId>
-               <version>${logback.version}</version>
-           </dependency>
+      <!-- Logback Extensions sub-modules dependency .jars (alphabetized based on artifactId for easy scanning please!): -->
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-access</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
 
-          <dependency>
-               <groupId>ch.qos.logback</groupId>
-               <artifactId>logback-classic</artifactId>
-               <version>${logback.version}</version>
-           </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
 
-          <dependency>
-               <groupId>ch.qos.logback</groupId>
-               <artifactId>logback-core</artifactId>
-               <version>${logback.version}</version>
-           </dependency>
-        </dependencies>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+    </dependencies>
 
-    </dependencyManagement>
+  </dependencyManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
-                    <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.gmaven</groupId>
-                                        <artifactId>gmaven-plugin</artifactId>
-                                        <versionRange>[1.0.0,)</versionRange>
-                                        <goals>
-                                            <goal>testCompile</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>testCompile</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <preparationGoals>clean install</preparationGoals>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <useReleaseProfile>false</useReleaseProfile>
+          <!-- <goals>deploy site-deploy</goals> -->
+          <goals>deploy</goals>
+          <arguments>-Prelease</arguments>
+          <mavenExecutorId>forked-path</mavenExecutorId>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <profile>
+      <id>debug</id>
+      <properties>
+        <maven.compiler.debug>true</maven.compiler.debug>
+        <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <preparationGoals>clean install</preparationGoals>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <!-- <goals>deploy site-deploy</goals> -->
-                    <goals>deploy</goals>
-                    <arguments>-Prelease</arguments>
-                    <mavenExecutorId>forked-path</mavenExecutorId>
-                </configuration>
-            </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9.1</version>
+            <executions>
+              <execution>
+                <id>attach-api-docs</id>
+                <goals>
+                  <!--suppress MavenModelInspection -->
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+            <inherited>true</inherited>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+            <inherited>true</inherited>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
 
-    <profiles>
-
-        <profile>
-            <id>debug</id>
-            <properties>
-                <maven.compiler.debug>true</maven.compiler.debug>
-                <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-api-docs</id>
-                                <goals>
-                                    <!--suppress MavenModelInspection -->
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <inherited>true</inherited>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>2.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <inherited>true</inherited>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
