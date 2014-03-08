@@ -47,7 +47,9 @@ if [ ! ${dryrun} ]; then
   mvnDryRun=-DdryRun
 fi
 
-mvn -Dtag=v_${version} $mvnDryRun release:clean release:prepare release:perform
+mvn release:clean
+mvn -Dtag=v_${version} $mvnDryRun release:prepare
+mvn -Dtag=v_${version} $mvnDryRun release:perform
 
 # Update the version number in the README
 echo "Updating README.md..."
