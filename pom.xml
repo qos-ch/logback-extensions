@@ -166,7 +166,6 @@
         <configuration>
           <preparationGoals>clean install</preparationGoals>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <goals>deploy</goals>
           <arguments>-Prelease</arguments>
           <mavenExecutorId>forked-path</mavenExecutorId>
         </configuration>
