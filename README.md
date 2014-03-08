@@ -1,4 +1,4 @@
-<h1>logback-extensions <a href='https://logback.ci.cloudbees.com/job/logback-extensions/job/logback-extensions-JDK7-SNAPSHOT/'><img src='https://logback.ci.cloudbees.com/buildStatus/icon?job=logback-extensions/logback-extensions-JDK7-SNAPSHOT'></a></h1>
+<h1>logback-extensions <a href='https://logback.ci.cloudbees.com/job/logback-extensions/job/logback-extensions-OracleJDK7-SNAPSHOT/'><img src='https://logback.ci.cloudbees.com/buildStatus/icon?job=logback-extensions/logback-extensions-OracleJDK7-SNAPSHOT'></a></h1>
 <sup>v0.1.1</sup>
 
 https://github.com/qos-ch/logback-extensions/wiki
