@@ -154,10 +154,49 @@
             <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.3.1</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+              <manifestEntries>
+                <Implementation-Build>${buildNumber}</Implementation-Build>
+                <Implementation-Timestamp>${timestamp}</Implementation-Timestamp>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+          <timestampFormat>{0,date,d-MMM-yyyy HH:mm:ss Z}</timestampFormat>
+          <items>
+            <item>timestamp</item>
+          </items>
+        </configuration>
+      </plugin>
+
       <!-- to perform release, enter: "mvn release:clean release:prepare release:perform" -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
