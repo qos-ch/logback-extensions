@@ -217,9 +217,6 @@
         <version>2.8.1</version>
         <configuration>
           <aggregate>true</aggregate>
-          <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-          </links>
           <groups>
             <group>
               <title>Loggly Extension</title>
@@ -415,7 +412,7 @@
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
-                    <targetJdk>1.5</targetJdk>
+                    <targetJdk>${jdk.version}</targetJdk>
                   </configuration>
                 </plugin>
 
