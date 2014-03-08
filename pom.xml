@@ -203,7 +203,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5</version>
         <configuration>
-          <preparationGoals>clean install</preparationGoals>
+          <preparationGoals>clean verify install</preparationGoals>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <arguments>-Prelease</arguments>
           <mavenExecutorId>forked-path</mavenExecutorId>
