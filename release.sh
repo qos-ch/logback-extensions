@@ -38,10 +38,6 @@ if [ "x$1" == "x--dryrun" ]; then
 fi
 echo "Starting release process for logback-extensions ${version}..."
 
-#
-# Build the JAR and print its SHA1. The last line uses GNU sed (gsed)
-# to update the README with the current release version.
-#
 mvnDryRun=
 if [ ${dryrun} ]; then
   mvnDryRun=-DdryRun=true
@@ -53,11 +49,11 @@ mvn -Dtag=v_${version} $mvnDryRun release:perform
 
 # Update the version number in the README
 echo "Updating README.md..."
-gsed -i -e "s/\\d\+\.\\d\+\.\\d\+/${version}/" ${readme}
+gsed -i -e "s/[0-9]\+.[0-9]\+.[0-9]\+/${version}/g" ${readme}
 
 if [ ! ${dryrun} ]; then
   git add ${readme}
-  git commit -m "Update README for release ${version}"
+  git commit -m "Update README for v_${version}"
 else
   echo '[dryrun] skip commit README...'
 fi
