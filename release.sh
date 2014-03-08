@@ -66,5 +66,6 @@ if [ ! ${dryrun} ]; then
   echo Done. Push changes to GitHub!!
 else
   echo Done...just a dryrun!!
+  echo Cleaning up...
   mvn release:clean
 fi
