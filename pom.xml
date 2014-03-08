@@ -172,6 +172,20 @@
             </archive>
           </configuration>
         </plugin>
+
+        <!-- to perform release, enter: "mvn release:clean release:prepare release:perf -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5</version>
+          <configuration>
+            <preparationGoals>clean install</preparationGoals>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <useReleaseProfile>true</useReleaseProfile>
+            <releaseProfiles>release</releaseProfiles>
+            <mavenExecutorId>forked-path</mavenExecutorId>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -195,19 +209,6 @@
           <items>
             <item>timestamp</item>
           </items>
-        </configuration>
-      </plugin>
-
-      <!-- to perform release, enter: "mvn release:clean release:prepare release:perform" -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.5</version>
-        <configuration>
-          <preparationGoals>clean verify install</preparationGoals>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <arguments>-Prelease</arguments>
-          <mavenExecutorId>forked-path</mavenExecutorId>
         </configuration>
       </plugin>
 
@@ -284,43 +285,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>testSkip</id>
-      <properties>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-    </profile>
-
-    <!-- This profile automatically activates with the maven-release plugin
-         to sign the artifacts, which is required for uploading to Maven
-         Central. -->
-    <profile>
-      <id>release-sign-artifacts</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.5</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
 
     <profile>
       <id>release</id>
