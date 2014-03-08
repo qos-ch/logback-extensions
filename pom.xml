@@ -28,7 +28,7 @@
   <groupId>org.logback-extensions</groupId>
   <artifactId>logback-ext-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>0.1.2</version>
 
   <name>Logback Extensions</name>
   <url>https://github.com/qos-ch/logback-extensions/</url>
@@ -50,6 +50,7 @@
     <connection>scm:git:git://github.com/qos-ch/logback-extensions.git</connection>
     <developerConnection>scm:git:git@github.com:qos-ch/logback-extensions.git</developerConnection>
     <url>https://github.com/qos-ch/logback-extensions</url>
+    <tag>v_0.1.2</tag>
   </scm>
   <issueManagement>
     <system>GitHub</system>
