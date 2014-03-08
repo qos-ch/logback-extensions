@@ -43,8 +43,8 @@ echo "Starting release process for logback-extensions ${version}..."
 # to update the README with the current release version.
 #
 mvnDryRun=
-if [ ! ${dryrun} ]; then
-  mvnDryRun=-DdryRun
+if [ ${dryrun} ]; then
+  mvnDryRun=-DdryRun=true
 fi
 
 mvn release:clean
