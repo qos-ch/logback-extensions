@@ -88,8 +88,13 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <!-- Compile Dependencies: -->
     <logback.version>1.1.1</logback.version>
+
+    <!-- JDK properties that can be overridden from the command line
+         to build under a different JDKs (continuous integration) -->
+    <jdk.version>1.7</jdk.version>
+    <maven.compiler.source>${jdk.version}</maven.compiler.source>
+    <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
     <!-- redirect test output to a file in order to reduce noise -->
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
@@ -146,8 +151,6 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
           <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
             <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
