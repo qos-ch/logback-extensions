@@ -206,7 +206,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
                 }
                 String s = new Timestamp(System.currentTimeMillis()) + " - OutputStream is full, discard previous logs" + LINE_SEPARATOR;
                 try {
-                    getFilledBuckets().peekLast().write(s.getBytes());
+                    getFilledBuckets().peekLast().write(s.getBytes(charset));
                     addWarn(s);
                 } catch (IOException e) {
                     addWarn("Exception appending warning message '" + s + "'", e);
