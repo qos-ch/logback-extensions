@@ -131,14 +131,21 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
     }
 
     protected String buildEndpointUrl(String inputKey) {
-        return new StringBuilder(DEFAULT_ENDPOINT_PREFIX).append(getEndpointPath())
-        		.append(inputKey).toString();
+        return new StringBuilder(DEFAULT_ENDPOINT_PREFIX).append(getEndpointPrefix())
+                .append(inputKey).toString();
     }
     
     /**
-     * The standard HTTP endpoint uses a different URL path than the bulk HTTP endpoint
+     * Returns the URL path prefix for the Loggly endpoint to which the 
+     * implementing class will send log events. This path prefix varies
+     * for the different Loggly services. The final endpoint URL is built
+     * by concatenating the {@link #DEFAULT_ENDPOINT_PREFIX} with the
+     * endpoint prefix from {@link #getEndpointPrefix()} and the 
+     * {@link #inputKey}.
+     *
+     * @return the URL path prefix for the Loggly endpoint
      */
-    protected abstract String getEndpointPath();
+    protected abstract String getEndpointPrefix();
 
     public String getEndpointUrl() {
         return endpointUrl;
