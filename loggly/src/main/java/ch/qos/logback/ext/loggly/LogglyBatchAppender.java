@@ -144,6 +144,8 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  */
 public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements LogglyBatchAppenderMBean {
 
+    public static final String ENDPOINT_URL_PATH = "bulk/";
+    
     private boolean debug = false;
 
     private int flushIntervalInSeconds = 3;
@@ -448,5 +450,10 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
                 addWarn("Exception processing log entries", e);
             }
         }
+    }
+
+    @Override
+    protected String getEndpointPrefix() {
+        return ENDPOINT_URL_PATH;
     }
 }

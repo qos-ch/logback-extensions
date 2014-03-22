@@ -35,7 +35,7 @@ import java.nio.charset.Charset;
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  */
 public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBase<E> {
-    public static final String DEFAULT_ENDPOINT_PREFIX = "https://logs-01.loggly.com/inputs/";
+    public static final String DEFAULT_ENDPOINT_PREFIX = "https://logs-01.loggly.com/";
     public static final String DEFAULT_LAYOUT_PATTERN = "%d{\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\",UTC} %-5level [%thread] %logger: %m%n";
     protected static final Charset UTF_8 = Charset.forName("UTF-8");
     protected String endpointUrl;
@@ -131,8 +131,21 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
     }
 
     protected String buildEndpointUrl(String inputKey) {
-        return new StringBuilder(DEFAULT_ENDPOINT_PREFIX).append(inputKey).toString();
+        return new StringBuilder(DEFAULT_ENDPOINT_PREFIX).append(getEndpointPrefix())
+                .append(inputKey).toString();
     }
+    
+    /**
+     * Returns the URL path prefix for the Loggly endpoint to which the 
+     * implementing class will send log events. This path prefix varies
+     * for the different Loggly services. The final endpoint URL is built
+     * by concatenating the {@link #DEFAULT_ENDPOINT_PREFIX} with the
+     * endpoint prefix from {@link #getEndpointPrefix()} and the 
+     * {@link #inputKey}.
+     *
+     * @return the URL path prefix for the Loggly endpoint
+     */
+    protected abstract String getEndpointPrefix();
 
     public String getEndpointUrl() {
         return endpointUrl;

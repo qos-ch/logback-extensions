@@ -29,6 +29,8 @@ import java.net.URL;
  */
 public class LogglyAppender<E> extends AbstractLogglyAppender<E> {
 
+    public static final String ENDPOINT_URL_PATH = "inputs/";
+    
     public LogglyAppender() {
     }
 
@@ -70,6 +72,11 @@ public class LogglyAppender<E> extends AbstractLogglyAppender<E> {
         } finally {
             output.close();
         }
+    }
+
+    @Override
+    protected String getEndpointPrefix() {
+        return ENDPOINT_URL_PATH;
     }
 }
 
