@@ -53,6 +53,9 @@ public class LogglyAppender<E> extends AbstractLogglyAppender<E> {
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.addRequestProperty("Content-Type", this.layout.getContentType());
+            if(xLogglyTag != null) {
+            	connection.addRequestProperty("X-LOGGLY-TAG", xLogglyTag);
+            }
             connection.connect();
             sendAndClose(event, connection.getOutputStream());
             connection.disconnect();
