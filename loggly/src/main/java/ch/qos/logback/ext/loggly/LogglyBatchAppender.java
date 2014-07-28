@@ -104,6 +104,11 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <td>int</td>
  * <td>Interval of the buffer flush to Loggly API. Default value: <code>3</code>.</td>
  * </tr>
+ * <tr>
+ * <td>connReadTimeoutSeconds</td>
+ * <td>int</td>
+ * <td>How Long the HTTP Connection will wait on reads. Default value: <code>1</code> second.</td>
+ * </tr>
  * </table>
  * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each, which seems very reasonable even for small JVMs.
  * If logs are discarded, try first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
@@ -173,6 +178,9 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     private int maxBucketSizeInKilobytes = 1024;
 
     private Charset charset = Charset.forName("UTF-8");
+
+    /* Store Connection Read Timeout */
+    private int connReadTimeoutSeconds = 1;
 
     @Override
     protected void append(E eventObject) {
@@ -334,6 +342,8 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         try {
 
             HttpURLConnection conn = getHttpConnection(new URL(endpointUrl));
+            /* Set connection Read Timeout */
+            conn.setReadTimeout(connReadTimeoutSeconds*1000);
             BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());
 
             long len = IoUtils.copy(in, out);
@@ -428,6 +438,13 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
     public void setMaxBucketSizeInKilobytes(int maxBucketSizeInKilobytes) {
         this.maxBucketSizeInKilobytes = maxBucketSizeInKilobytes;
+    }
+
+    /**
+     * set method for Logback to allow Connection Read Timeout to be exposed
+     */
+    public void setConnReadTimeoutSeconds(int connReadTimeoutSeconds) {
+        this.connReadTimeoutSeconds = connReadTimeoutSeconds;
     }
 
     private String getDebugInfo() {
