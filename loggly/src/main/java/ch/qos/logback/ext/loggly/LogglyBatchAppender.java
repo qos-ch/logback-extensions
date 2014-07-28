@@ -174,6 +174,9 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
     private Charset charset = Charset.forName("UTF-8");
 
+    /* Store Connection Read Timeout */
+    private int connReadTimeoutSeconds = 1;
+
     @Override
     protected void append(E eventObject) {
         if (!isStarted()) {
@@ -334,6 +337,8 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         try {
 
             HttpURLConnection conn = getHttpConnection(new URL(endpointUrl));
+            /* Set connection Read Timeout */
+            conn.setReadTimeout(connReadTimeoutSeconds*1000);
             BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());
 
             long len = IoUtils.copy(in, out);
@@ -430,7 +435,12 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         this.maxBucketSizeInKilobytes = maxBucketSizeInKilobytes;
     }
 
-    private String getDebugInfo() {
+    /* set method for Logback to allow Connection Read Timeout to be exposed */
+	public void setConnReadTimeoutSeconds(int connReadTimeoutSeconds) {
+		this.connReadTimeoutSeconds = connReadTimeoutSeconds;
+	}
+
+	private String getDebugInfo() {
         return "{" +
                 "sendDurationInMillis=" + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS) +
                 ", sendSuccessCount=" + sendSuccessCount +
