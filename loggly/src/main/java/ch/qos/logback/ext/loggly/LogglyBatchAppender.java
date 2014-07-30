@@ -104,6 +104,11 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <td>int</td>
  * <td>Interval of the buffer flush to Loggly API. Default value: <code>3</code>.</td>
  * </tr>
+ * <tr>
+ * <td>connReadTimeoutSeconds</td>
+ * <td>int</td>
+ * <td>How Long the HTTP Connection will wait on reads. Default value: <code>1</code> second.</td>
+ * </tr>
  * </table>
  * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each, which seems very reasonable even for small JVMs.
  * If logs are discarded, try first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
