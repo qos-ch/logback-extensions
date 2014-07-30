@@ -440,7 +440,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
      */
     public void setConnReadTimeoutSeconds(int connReadTimeoutSeconds) {
         this.connReadTimeoutSeconds = connReadTimeoutSeconds;
-	}
+    }
 
     private String getDebugInfo() {
         return "{" +
