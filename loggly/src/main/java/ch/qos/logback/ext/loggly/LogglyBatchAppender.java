@@ -435,12 +435,14 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         this.maxBucketSizeInKilobytes = maxBucketSizeInKilobytes;
     }
 
-    /* set method for Logback to allow Connection Read Timeout to be exposed */
-	public void setConnReadTimeoutSeconds(int connReadTimeoutSeconds) {
-		this.connReadTimeoutSeconds = connReadTimeoutSeconds;
+    /**
+     * set method for Logback to allow Connection Read Timeout to be exposed
+     */
+    public void setConnReadTimeoutSeconds(int connReadTimeoutSeconds) {
+        this.connReadTimeoutSeconds = connReadTimeoutSeconds;
 	}
 
-	private String getDebugInfo() {
+    private String getDebugInfo() {
         return "{" +
                 "sendDurationInMillis=" + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS) +
                 ", sendSuccessCount=" + sendSuccessCount +
