@@ -17,9 +17,12 @@ package ch.qos.logback.ext.spring.web;
 
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.ext.spring.LogbackConfigurer;
+
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ResourceUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.util.SystemPropertyUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -123,27 +126,32 @@ public class WebLogbackConfigurer {
         }
 
         // Only perform custom Logback initialization in case of a config file.
-        String location = servletContext.getInitParameter(CONFIG_LOCATION_PARAM);
-        if (location != null) {
-            // Perform actual Logback initialization; else rely on Logback's default initialization.
-            try {
-                // Resolve system property placeholders before potentially resolving real path.
-                location = SystemPropertyUtils.resolvePlaceholders(location);
-                // Return a URL (e.g. "classpath:" or "file:") as-is;
-                // consider a plain file path as relative to the web application root directory.
-                if (!ResourceUtils.isUrl(location)) {
-                    location = WebUtils.getRealPath(servletContext, location);
+        String locationParam = servletContext.getInitParameter(CONFIG_LOCATION_PARAM);
+        if (locationParam != null) {
+            // Perform Logback initialization; else rely on Logback's default initialization.
+            for (String location : StringUtils.tokenizeToStringArray(locationParam,
+                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS)) {
+                try {
+                    // Resolve system property placeholders before potentially resolving real path.
+                    location = SystemPropertyUtils.resolvePlaceholders(location);
+                    // Return a URL (e.g. "classpath:" or "file:") as-is;
+                    // consider a plain file path as relative to the web application root directory.
+                    if (!ResourceUtils.isUrl(location)) {
+                        location = WebUtils.getRealPath(servletContext, location);
+                    }
+    
+                    // Write log message to server log.
+                    servletContext.log("Initializing Logback from [" + location + "]");
+    
+                    // Initialize
+                    LogbackConfigurer.initLogging(location);
+                    break;
+                } catch (FileNotFoundException ex) {
+                    servletContext.log("No logback configuration file found at [" + location + "]");
+                    //throw new IllegalArgumentException("Invalid 'logbackConfigLocation' parameter: " + ex.getMessage());
+                } catch (JoranException e) {
+                    throw new RuntimeException("Unexpected error while configuring logback", e);
                 }
-
-                // Write log message to server log.
-                servletContext.log("Initializing Logback from [" + location + "]");
-
-                // Initialize
-                LogbackConfigurer.initLogging(location);
-            } catch (FileNotFoundException ex) {
-                throw new IllegalArgumentException("Invalid 'logbackConfigLocation' parameter: " + ex.getMessage());
-            } catch (JoranException e) {
-                throw new RuntimeException("Unexpected error while configuring logback", e);
             }
         }
 
