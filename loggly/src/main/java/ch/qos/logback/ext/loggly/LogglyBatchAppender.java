@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
@@ -321,6 +322,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         conn.setDoOutput(true);
         conn.setDoInput(true);
         conn.setRequestProperty("Content-Type", layout.getContentType() + "; charset=" + charset.name());
+		connection.addRequestProperty("X-Forwarded-For", InetAddress.getLocalHost().getHostAddress());
         conn.setRequestMethod("POST");
         conn.setReadTimeout(getHttpReadTimeoutInMillis());
         return conn;

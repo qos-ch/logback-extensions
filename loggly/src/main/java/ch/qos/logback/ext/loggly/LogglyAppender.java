@@ -18,6 +18,7 @@ package ch.qos.logback.ext.loggly;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 
 /**
@@ -53,6 +54,7 @@ public class LogglyAppender<E> extends AbstractLogglyAppender<E> {
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.addRequestProperty("Content-Type", this.layout.getContentType());
+			connection.addRequestProperty("X-Forwarded-For", InetAddress.getLocalHost().getHostAddress());
             connection.connect();
             sendAndClose(event, connection.getOutputStream());
             connection.disconnect();
