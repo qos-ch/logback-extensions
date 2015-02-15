@@ -93,7 +93,7 @@
 
     <!-- JDK properties that can be overridden from the command line
          to build under a different JDKs (continuous integration) -->
-    <jdk.version>1.7</jdk.version>
+    <jdk.version>1.6</jdk.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source>
     <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
