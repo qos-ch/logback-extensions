@@ -20,7 +20,7 @@ import ch.qos.logback.ext.spring.LogbackConfigurer;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.SystemPropertyUtils;
+import org.springframework.web.util.ServletContextPropertyUtils;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletContext;
@@ -128,7 +128,7 @@ public class WebLogbackConfigurer {
             // Perform actual Logback initialization; else rely on Logback's default initialization.
             try {
                 // Resolve system property placeholders before potentially resolving real path.
-                location = SystemPropertyUtils.resolvePlaceholders(location);
+                location = ServletContextPropertyUtils.resolvePlaceholders(location);
                 // Return a URL (e.g. "classpath:" or "file:") as-is;
                 // consider a plain file path as relative to the web application root directory.
                 if (!ResourceUtils.isUrl(location)) {
