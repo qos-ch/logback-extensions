@@ -80,7 +80,7 @@ public class MissingConfigurationTest {
     }
 
     @Test(timeout = 1000L)
-    public void testMissingConfiguration() throws Exception {
+    public void testMissingFileConfiguration() throws Exception {
         MockServletContext context = new MockServletContext();
         File missingConfig = null;
         do {
@@ -89,6 +89,13 @@ public class MissingConfigurationTest {
 
         context.addInitParameter(CONFIG_LOCATION_PARAM, missingConfig.toURI().toURL().toString());
 
+        WebLogbackConfigurer.initLogging(context);
+    }
+
+    @Test
+    public void testMissingClasspathConfiguration() throws Exception {
+        MockServletContext context = new MockServletContext();
+        context.addInitParameter(CONFIG_LOCATION_PARAM, "classpath:ch/qos/logback/ext/spring/does/not/exist/" + rng.nextInt() + ".xml");
         WebLogbackConfigurer.initLogging(context);
     }
 
@@ -115,6 +122,33 @@ public class MissingConfigurationTest {
         } while (missingConfig.exists());
 
         context.addInitParameter(CONFIG_LOCATION_PARAM, missingConfig.toURI().toURL().toString() + "," + getClass().getResource("fakeLogger.xml"));
+        WebLogbackConfigurer.initLogging(context);
+        Logger log = LoggerFactory.getLogger(MissingConfigurationTest.class);
+        String key = "missingConfig" + rng.nextInt();
+        log.error(key);
+        boolean found = false;
+        ArrayList<ILoggingEvent> logs;
+        synchronized (FakeAppender.class) {
+            logs = new ArrayList<ILoggingEvent>(FakeAppender.logs);
+        }
+        for (ILoggingEvent evt : logs) {
+            if (key.equals(evt.getMessage())) {
+                found = true;
+            }
+        }
+        assertTrue("Logging event was not found: " + logs, found);
+    }
+
+    @Test(timeout = 1000L)
+    public void testMissingFollowedByNormalClasspathConfiguration() throws Exception {
+        MockServletContext context = new MockServletContext();
+        File missingConfig = null;
+        do {
+            missingConfig = new File("missingConfigTest" + rng.nextInt() + ".xml");
+        } while (missingConfig.exists());
+
+        context.addInitParameter(CONFIG_LOCATION_PARAM, missingConfig.toURI().toURL().toString() + "," +
+                "classpath:ch/qos/logback/ext/spring/fakeLogger.xml");
         WebLogbackConfigurer.initLogging(context);
         Logger log = LoggerFactory.getLogger(MissingConfigurationTest.class);
         String key = "missingConfig" + rng.nextInt();
