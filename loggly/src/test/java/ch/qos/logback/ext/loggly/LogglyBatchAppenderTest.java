@@ -56,7 +56,7 @@ public class LogglyBatchAppenderTest {
     httpServer = new HttpTestServer(PORT);
     httpServer.start();
     context = new LoggerContext();
-    OnConsoleStatusListener.addNewInstanceToContext(context);
+//    OnConsoleStatusListener.addNewInstanceToContext(context);
   }
 
   /**

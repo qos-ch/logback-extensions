@@ -62,7 +62,7 @@ public class LogglySendOnlyWhenMaxBucketsFullTest {
   @BeforeClass
   static public void beforeClass() {
     context = new LoggerContext();
-    OnConsoleStatusListener.addNewInstanceToContext(context);
+//    OnConsoleStatusListener.addNewInstanceToContext(context);
   }
 
   /**

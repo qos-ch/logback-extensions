@@ -89,11 +89,11 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <logback.version>1.1.1</logback.version>
+    <logback.version>1.1.7</logback.version>
 
     <!-- JDK properties that can be overridden from the command line
          to build under a different JDKs (continuous integration) -->
-    <jdk.version>1.6</jdk.version>
+    <jdk.version>1.8</jdk.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source>
     <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
