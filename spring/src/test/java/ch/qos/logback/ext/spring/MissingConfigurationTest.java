@@ -15,18 +15,20 @@
  */
 package ch.qos.logback.ext.spring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import ch.qos.logback.classic.BasicConfigurator;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.ext.spring.web.WebLogbackConfigurer;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -40,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.StaticLoggerBinder;
 import org.springframework.mock.web.MockServletContext;
+import static org.junit.Assert.*;
 
 /**
  * Tests the behavior of the logging configuration if the configuration files are missing.
@@ -56,6 +59,8 @@ public class MissingConfigurationTest {
     @ClassRule
     public static final TemporaryFolder PLAYGROUND = new TemporaryFolder();
 
+    private LogSensitiveMockServletContext context = new LogSensitiveMockServletContext();
+
     @Before
     public void clearFakeLogs() {
         FakeAppender.logs.clear();
@@ -68,20 +73,26 @@ public class MissingConfigurationTest {
     public TestRule ensureLoggingInitialized = new TestWatcher() {
         @Override
         protected void starting(Description description) {
+            LoggerContext loggerContext = doCleanup();
+            BasicConfigurator.configure(loggerContext);
             Logger log = LoggerFactory.getLogger(MissingConfigurationTest.class);
             log.info("Starting test: " + description.getMethodName());
         }
     };
 
-    @After
-    public void cleanupLogging() {
+    private LoggerContext doCleanup() {
         LoggerContext loggerContext = (LoggerContext) StaticLoggerBinder.getSingleton().getLoggerFactory();
         loggerContext.reset();
+        return loggerContext;
     }
 
-    @Test(timeout = 1000L)
+    @After
+    public void cleanupLogging() {
+        doCleanup();
+    }
+
+    @Test(timeout = 3000L)
     public void testMissingFileConfiguration() throws Exception {
-        MockServletContext context = new MockServletContext();
         File missingConfig = null;
         do {
             missingConfig = new File("missingConfigTest" + rng.nextInt() + ".xml");
@@ -90,18 +101,21 @@ public class MissingConfigurationTest {
         context.addInitParameter(CONFIG_LOCATION_PARAM, missingConfig.toURI().toURL().toString());
 
         WebLogbackConfigurer.initLogging(context);
+        assertThat("Missing configuration file wasn't seen.", context.messages,
+                Matchers.hasItem((Matchers.containsString(missingConfig.getName()))));
     }
 
     @Test
     public void testMissingClasspathConfiguration() throws Exception {
-        MockServletContext context = new MockServletContext();
-        context.addInitParameter(CONFIG_LOCATION_PARAM, "classpath:ch/qos/logback/ext/spring/does/not/exist/" + rng.nextInt() + ".xml");
+        final String fakeEntry = "classpath:ch/qos/logback/ext/spring/does/not/exist/" + rng.nextInt() + ".xml";
+        context.addInitParameter(CONFIG_LOCATION_PARAM, fakeEntry);
         WebLogbackConfigurer.initLogging(context);
+        assertThat("Missing configuration classpath wasn't seen.", context.messages,
+                Matchers.hasItem((Matchers.containsString(fakeEntry))));
     }
 
     @Test
     public void testInvalidConfiguration() throws Exception {
-        MockServletContext context = new MockServletContext();
         File empty = PLAYGROUND.newFile("empty.xml");
         context.addInitParameter(CONFIG_LOCATION_PARAM, empty.toURI().toURL().toString());
         try {
@@ -113,57 +127,75 @@ public class MissingConfigurationTest {
         }
     }
 
-    @Test(timeout = 1000L)
+    @Test(timeout = 3000L)
     public void testMissingFollowedByNormalConfiguration() throws Exception {
-        MockServletContext context = new MockServletContext();
         File missingConfig = null;
         do {
             missingConfig = new File("missingConfigTest" + rng.nextInt() + ".xml");
         } while (missingConfig.exists());
 
-        context.addInitParameter(CONFIG_LOCATION_PARAM, missingConfig.toURI().toURL().toString() + "," + getClass().getResource("fakeLogger.xml"));
-        WebLogbackConfigurer.initLogging(context);
-        Logger log = LoggerFactory.getLogger(MissingConfigurationTest.class);
-        String key = "missingConfig" + rng.nextInt();
-        log.error(key);
-        boolean found = false;
-        ArrayList<ILoggingEvent> logs;
-        synchronized (FakeAppender.class) {
-            logs = new ArrayList<ILoggingEvent>(FakeAppender.logs);
-        }
-        for (ILoggingEvent evt : logs) {
-            if (key.equals(evt.getMessage())) {
-                found = true;
+        File fileConfig = PLAYGROUND.newFile("fakeLogger.xml");
+        URL u = getClass().getResource("fakeLogger.xml");
+        InputStream is = null;
+        FileOutputStream os = null;
+        try {
+            is = u.openStream();
+            os = new FileOutputStream(fileConfig);
+            byte[] buff = new byte[2048];
+            for (int read = is.read(buff); read != -1; read = is.read(buff)) {
+                os.write(buff, 0, read);
+            }
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+            if (os != null) {
+                os.close();
             }
         }
-        assertTrue("Logging event was not found: " + logs, found);
-    }
-
-    @Test(timeout = 1000L)
-    public void testMissingFollowedByNormalClasspathConfiguration() throws Exception {
-        MockServletContext context = new MockServletContext();
-        File missingConfig = null;
-        do {
-            missingConfig = new File("missingConfigTest" + rng.nextInt() + ".xml");
-        } while (missingConfig.exists());
 
         context.addInitParameter(CONFIG_LOCATION_PARAM, missingConfig.toURI().toURL().toString() + "," +
-                "classpath:ch/qos/logback/ext/spring/fakeLogger.xml");
+                fileConfig.toURI().toURL().toString());
         WebLogbackConfigurer.initLogging(context);
+        assertThat("Missing configuration file wasn't seen.", context.messages,
+                Matchers.hasItem((Matchers.containsString(missingConfig.getName()))));
+        assertThat("Actual configuration file wasn't seen.", context.messages,
+                Matchers.hasItem((Matchers.containsString(fileConfig.toURI().toURL().toString()))));
+
         Logger log = LoggerFactory.getLogger(MissingConfigurationTest.class);
         String key = "missingConfig" + rng.nextInt();
         log.error(key);
-        boolean found = false;
         ArrayList<ILoggingEvent> logs;
         synchronized (FakeAppender.class) {
             logs = new ArrayList<ILoggingEvent>(FakeAppender.logs);
         }
-        for (ILoggingEvent evt : logs) {
-            if (key.equals(evt.getMessage())) {
-                found = true;
-            }
+        assertThat(logs, Matchers.hasItem(new LoggingEventMatcher(key)));
+    }
+
+    @Test(timeout = 3000L)
+    public void testMissingFollowedByNormalClasspathConfiguration() throws Exception {
+        File missingConfig = null;
+        do {
+            missingConfig = new File("missingConfigTest" + rng.nextInt() + ".xml");
+        } while (missingConfig.exists());
+
+        String cpConfig = "classpath:ch/qos/logback/ext/spring/fakeLogger.xml";
+        context.addInitParameter(CONFIG_LOCATION_PARAM, missingConfig.toURI().toURL().toString() + "," +
+                cpConfig);
+        WebLogbackConfigurer.initLogging(context);
+        assertThat("Missing configuration file wasn't seen.", context.messages,
+                Matchers.hasItem((Matchers.containsString(missingConfig.getName()))));
+        assertThat("Actual configuration file wasn't seen.", context.messages,
+                Matchers.hasItem((Matchers.containsString(cpConfig))));
+
+        Logger log = LoggerFactory.getLogger(MissingConfigurationTest.class);
+        String key = "missingConfig" + rng.nextInt();
+        log.error(key);
+        ArrayList<ILoggingEvent> logs;
+        synchronized (FakeAppender.class) {
+            logs = new ArrayList<ILoggingEvent>(FakeAppender.logs);
         }
-        assertTrue("Logging event was not found: " + logs, found);
+        assertThat(logs, Matchers.hasItem(new LoggingEventMatcher(key)));
     }
 
     public static class FakeAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
@@ -174,6 +206,57 @@ public class MissingConfigurationTest {
             synchronized(FakeAppender.class) {
                 logs.add(eventObject);
             }
+        }
+    }
+
+    private static class LoggingEventMatcher extends BaseMatcher<ILoggingEvent> {
+        private final String message;
+
+        public LoggingEventMatcher(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public boolean matches(Object item) {
+            if (!(item instanceof ILoggingEvent)) {
+                return false;
+            }
+            return message.equals(((ILoggingEvent) item).getMessage());
+        }
+
+        @Override
+        public void describeTo(org.hamcrest.Description description) {
+            description.appendText("Logging event with message").appendValue(message);
+        }
+    }
+
+    /**
+     * Spring's MockServletContext class uses a logger to write messages. This interferes with testing the actual
+     * logging system. In addition it makes it difficult to capture messages that we should expect to be logged to the
+     * servlet.
+     */
+    private static class LogSensitiveMockServletContext extends MockServletContext {
+        public final ArrayList<String> messages = new ArrayList<String>();
+        private static final String PREFIX = "MockServlet: ";
+
+        @Override
+        public void log(String message) {
+            System.out.println(PREFIX + message);
+            messages.add(message);
+        }
+
+        @Override
+        public void log(Exception ex, String message) {
+            log(message, ex);
+        }
+
+        @Override
+        public void log(String message, Throwable ex) {
+            System.err.println(PREFIX + message);
+            messages.add(message);
+            System.err.println(PREFIX + ex.toString());
+            messages.add(ex.toString());
+            ex.printStackTrace();
         }
     }
 }
