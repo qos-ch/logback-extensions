@@ -17,6 +17,8 @@ package ch.qos.logback.ext.spring;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import org.slf4j.impl.StaticLoggerBinder;
@@ -62,13 +64,29 @@ public class LogbackConfigurer {
      *                 (e.g. "classpath:logback.xml"), an absolute file URL
      *                 (e.g. "file:C:/logback.xml), or a plain absolute path in the file system
      *                 (e.g. "C:/logback.xml")
-     * @throws java.io.FileNotFoundException if the location specifies an invalid file path
+     * @throws java.io.FileNotFoundException if the location is not found or if the location specifies an invalid file path
      * @throws ch.qos.logback.core.joran.spi.JoranException
      *                                       Thrown
      */
     public static void initLogging(String location) throws FileNotFoundException, JoranException {
         String resolvedLocation = SystemPropertyUtils.resolvePlaceholders(location);
         URL url = ResourceUtils.getURL(resolvedLocation);
+        InputStream check = null;
+        try {
+            check = url.openStream();
+        } catch (FileNotFoundException e) {
+            throw e;
+        } catch (IOException e) {
+            // Ignore and let the configuration continue in case Logback can handle it successfully
+        } finally {
+            if (check != null) {
+                try {
+                    check.close();
+                } catch (IOException e) {
+                    // We can probably eat this safely and let Logback trip the error
+                }
+            }
+        }
         LoggerContext loggerContext = (LoggerContext)StaticLoggerBinder.getSingleton().getLoggerFactory();
 
         // in the current version logback automatically configures at startup the context, so we have to reset it

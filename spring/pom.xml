@@ -72,6 +72,26 @@
       <optional>true</optional>
     </dependency>
 
+    <!-- Testing -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -87,6 +107,46 @@
               <goal>jar</goal>
               <goal>test-jar</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>default</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/README*</exclude>
+                <exclude>**/LICENSE*</exclude>
+                <exclude>**/AUTHORS*</exclude>
+                <exclude>src/test/resources/**</exclude>
+                <exclude>src/main/resources/**</exclude>
+                <exclude>src/test/java/**/MissingConfigurationTest*</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>mitre-license</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <properties>
+                <owner>The MITRE Corporation</owner>
+                <project.inceptionYear>2016</project.inceptionYear>
+                <email>jgibson@mitre.org</email>
+              </properties>
+              <includes>
+                <include>src/test/java/**/MissingConfigurationTest*</include>
+              </includes>
+            </configuration>
           </execution>
         </executions>
       </plugin>
