@@ -40,6 +40,8 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
     protected static final Charset UTF_8 = Charset.forName("UTF-8");
     protected String endpointUrl;
     protected String inputKey;
+    private LogglyTagList tags;
+    protected String xLogglyTag;
     protected Layout<E> layout;
     protected boolean layoutCreatedImplicitly = false;
     private String pattern;
@@ -168,6 +170,29 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
             cleaned = null;
         }
         this.inputKey = cleaned;
+    }
+    
+    public void setTags(LogglyTagList tags) {
+    	this.tags = tags;
+    	if(this.tags != null && !this.tags.isEmpty()) {
+        	StringBuilder sb = new StringBuilder();
+        	for(int i = 0; i < this.tags.size(); ++i) {
+        		if(i > 0) {
+        			sb.append(",");
+        		}
+        		sb.append(this.tags.get(i).trim());
+        	}
+        	xLogglyTag = sb.toString();
+        	if(xLogglyTag.trim().equals("")) {
+        		xLogglyTag = null;
+        	}
+        } else {
+        	xLogglyTag = null;
+        }
+    }
+    
+    public LogglyTagList getTags() {
+    	return tags;
     }
 
     public String getPattern() {
