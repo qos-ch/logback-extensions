@@ -10,6 +10,8 @@ Run the following command to build:
 mvn clean install
 ```
 
+Check out Loggly's [Java Logback logging documentation](https://www.loggly.com/docs/java-logback/) to learn more.
+
 #### License
 ```
 Licensed under the Apache License, Version 2.0 (the "License");
