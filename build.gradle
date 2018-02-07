@@ -40,6 +40,8 @@ subprojects {
 
   javadoc {
     failOnError false
+    // disable javadoc lint warnings (e.g., missing javadoc)
+    options.addBooleanOption('Xdoclint:none', true)
   }
 
   task javadocJar(type: Jar, dependsOn: javadoc) {
