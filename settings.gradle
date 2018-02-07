@@ -1,0 +1,6 @@
+rootProject.name = 'logback-ext-parent'
+include ':logback-ext-loggly'
+include ':logback-ext-spring'
+
+project(':logback-ext-loggly').projectDir = "$rootDir/loggly" as File
+project(':logback-ext-spring').projectDir = "$rootDir/spring" as File

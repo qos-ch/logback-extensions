@@ -120,6 +120,7 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected Layout<E> createLayout() {
         PatternLayout layout = new PatternLayout();
         String pattern = getPattern();

@@ -1,0 +1,55 @@
+allprojects  {
+  apply plugin: 'maven'
+
+  group = 'org.logback-extensions'
+  version = VERSION_NAME
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.5
+  targetCompatibility = 1.5
+  tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    // Warn about deprecations
+    //options.compilerArgs << '-Xlint:deprecation'
+    // Warn about unchecked usages
+    options.compilerArgs << '-Xlint:unchecked'
+    // Don't warn about using source/target 1.5 option
+    options.compilerArgs << '-Xlint:-options'
+
+    options.debug(['debugLevel': 'source,lines,vars'])
+    options.debug = VERSION_NAME.contains('SNAPSHOT')
+  }
+
+  repositories {
+    mavenLocal()
+    jcenter()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+//    maven { url "http://repo.maven.apache.org/maven2" }
+  }
+
+  dependencies {
+    testCompile 'org.mockito:mockito-core:1.9.0'
+    testCompile 'junit:junit:4.12'
+  }
+
+  task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+  }
+
+  javadoc {
+    failOnError false
+  }
+
+  task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+  }
+
+  artifacts {
+    archives sourcesJar
+    archives javadocJar
+  }
+}

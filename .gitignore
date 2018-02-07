@@ -4,7 +4,10 @@
 *.iws
 .classpath
 .externalToolBuilders
+.gradle
 .project
 .settings
+.gradle
 target
 out
+build
