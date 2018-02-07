@@ -5,9 +5,3 @@ dependencies {
     testCompile 'org.simpleframework:simple:5.0.4'
     compile 'ch.qos.logback:logback-classic:1.2.3'
 }
-
-task packageTests(type: Jar) {
-    from sourceSets.test.output
-    classifier = 'tests'
-}
-artifacts.archives packageTests
