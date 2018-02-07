@@ -61,8 +61,8 @@ public class DiscardingRollingOutputStream extends OutputStream {
     private final AtomicInteger discardedBucketCount = new AtomicInteger();
 
     /**
-     * @param maxBucketSizeInBytes
-     * @param maxBucketCount
+     * @param maxBucketSizeInBytes maximum byte size of each bucket
+     * @param maxBucketCount maximum number of buckets
      */
     public DiscardingRollingOutputStream(int maxBucketSizeInBytes, int maxBucketCount) {
         if (maxBucketCount < 2) {
@@ -150,7 +150,7 @@ public class DiscardingRollingOutputStream extends OutputStream {
 
     /**
      * Moves the current active bucket to the list of filled buckets and defines a new one.
-     * <p/>
+     *
      * The new active bucket is reused from the {@link #recycledBucketPool} pool if one is available or recreated.
      */
     public void rollCurrentBucket() {
@@ -220,7 +220,7 @@ public class DiscardingRollingOutputStream extends OutputStream {
     }
 
     /**
-     * Number of discarded buckets. Monitoring oriented metric.
+     * @return Number of discarded buckets. Monitoring oriented metric.
      */
     public int getDiscardedBucketCount() {
         return discardedBucketCount.get();

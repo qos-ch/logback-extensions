@@ -137,7 +137,7 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <h2>Implementation decisions</h2>
  * <ul>
  * <li>Why buffer the generated log messages as bytes instead of using the
- * {@link ch.qos.logback.core.read.CyclicBufferAppender} and buffering the {@link ch.qos.logback.classic.spi.ILoggingEvent} ?
+ * {@code ch.qos.logback.core.read.CyclicBufferAppender} and buffering the {@code ch.qos.logback.classic.spi.ILoggingEvent} ?
  * Because it is much easier to control the size in memory</li>
  * <li>
  * Why buffer in a byte array instead of directly writing in a {@link BufferedOutputStream} on the {@link HttpURLConnection} ?
@@ -316,7 +316,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
      *
      * @param url target URL
      * @return the newly created HTTP connection
-     * @throws IOException
+     * @throws IOException connection error
      */
     protected HttpURLConnection getHttpConnection(URL url) throws IOException {
         HttpURLConnection conn;
@@ -336,8 +336,9 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
     /**
      * Send log entries to Loggly
+     * @param in log input stream
      */
-    protected void processLogEntries(InputStream in) throws IOException {
+    protected void processLogEntries(InputStream in) {
         long nanosBefore = System.nanoTime();
         try {
 
