@@ -40,7 +40,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.layout.EchoLayout;
-import ch.qos.logback.core.status.OnConsoleStatusListener;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LogglySendOnlyWhenMaxBucketsFullTest {
@@ -62,7 +61,6 @@ public class LogglySendOnlyWhenMaxBucketsFullTest {
   @BeforeClass
   static public void beforeClass() {
     context = new LoggerContext();
-    OnConsoleStatusListener.addNewInstanceToContext(context);
   }
 
   /**

@@ -30,7 +30,6 @@ import org.junit.Test;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.layout.EchoLayout;
-import ch.qos.logback.core.status.OnConsoleStatusListener;
 
 /**
  * Tests the LogglyBatchAppender
@@ -56,7 +55,6 @@ public class LogglyBatchAppenderTest {
     httpServer = new HttpTestServer(PORT);
     httpServer.start();
     context = new LoggerContext();
-    OnConsoleStatusListener.addNewInstanceToContext(context);
   }
 
   /**
