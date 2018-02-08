@@ -1,5 +1,5 @@
 
-description = 'Logback Extensions :: Loggly'
+description = POM_DESCRIPTION
 dependencies {
     testCompile 'de.sven-jacobs:loremipsum:1.0'
     testCompile 'org.simpleframework:simple:5.0.4'

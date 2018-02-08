@@ -1,5 +1,5 @@
 
-description = 'Logback Extensions :: Spring'
+description = POM_DESCRIPTION
 dependencies {
     compileOnly 'ch.qos.logback:logback-classic:1.2.3'
     compileOnly('org.springframework:spring-context:3.2.2.RELEASE') {

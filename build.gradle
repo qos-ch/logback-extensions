@@ -1,3 +1,20 @@
+buildscript {
+  repositories {
+    google()
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+
+    // NOTE: Do not place your application dependencies here; they belong
+    // in the individual module build.gradle files
+  }
+}
+plugins {
+  id 'io.codearte.nexus-staging' version '0.11.0' // must be in root project
+  id 'net.researchgate.release' version '2.6.0'
+}
+
 allprojects  {
   apply plugin: 'maven'
 
@@ -7,6 +24,8 @@ allprojects  {
 
 subprojects {
   apply plugin: 'java'
+  apply from: "${rootProject.rootDir}/gradle/deploy.gradle"
+
   sourceCompatibility = 1.6
   targetCompatibility = 1.6
   tasks.withType(JavaCompile) {
@@ -53,4 +72,22 @@ subprojects {
     archives sourcesJar
     archives javadocJar
   }
+}
+
+release {
+  tagTemplate = 'v_${version}'
+  preTagCommitMessage = ':cloud: Release'
+  tagCommitMessage = ':cloud: Release'
+  newVersionCommitMessage = ':cloud: Bump'
+
+//  versionPropertyFile = '../gradle.properties'
+  versionProperties = ['VERSION_NAME']
+
+  git {
+    requireBranch = ''
+  }
+}
+
+nexusStaging {
+  packageGroup = 'org.logback-extensions'
 }
