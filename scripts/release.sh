@@ -4,9 +4,9 @@
 . local.properties
 
 version=${VERSION_NAME%*-SNAPSHOT}
-baseVersion=${version%*-*}
-nextBuild=$((${version##*-} + 1))
-nextVersion="${baseVersion}-${nextBuild}-SNAPSHOT"
+baseVersion=${version%*.*}
+nextBuild=$((${version##*.} + 1))
+nextVersion="${baseVersion}.${nextBuild}-SNAPSHOT"
 
 echo "Starting release for logback-ext-${version} ..."
 
