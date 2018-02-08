@@ -21,10 +21,10 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "logback-ext/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "loggly/build.gradle" }}-{{ checksum  "spring/build.gradle" }}
       - run:
           name: Run Tests
-          command: ./gradlew check assembleDebug assembleRelease --parallel
+          command: ./gradlew check assemble --parallel
       - store_artifacts:
           path: loggly/build/reports
           destination: reports
