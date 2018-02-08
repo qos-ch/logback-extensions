@@ -1,12 +1,15 @@
 
 description = POM_DESCRIPTION
 dependencies {
-    compileOnly 'ch.qos.logback:logback-classic:1.2.3'
-    compileOnly('org.springframework:spring-context:3.2.2.RELEASE') {
+    testCompile 'org.springframework:spring-test:5.0.3.RELEASE'
+    testCompile 'org.slf4j:jcl-over-slf4j:1.7.25'
+
+    compile 'ch.qos.logback:logback-classic:1.2.3'
+    compileOnly('org.springframework:spring-context:5.0.3.RELEASE') {
 exclude(module: 'commons-logging')
     }
-    compileOnly('org.springframework:spring-web:3.2.2.RELEASE') {
+    compileOnly('org.springframework:spring-web:5.0.3.RELEASE') {
 exclude(module: 'commons-logging')
     }
-    compileOnly 'javax.servlet:servlet-api:2.5'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.0'
 }
