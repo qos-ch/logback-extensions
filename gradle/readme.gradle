@@ -12,7 +12,6 @@ task readme {
 
             def binding = [
                     version     : rootProject.VERSION_NAME - ~/-SNAPSHOT/,
-                    slf4jVersion: rootProject.slf4jVersion
             ]
 
             String newText = template.make(binding)
