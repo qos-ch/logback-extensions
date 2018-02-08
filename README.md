@@ -1,5 +1,5 @@
-<h1>logback-extensions <a href='https://logback.ci.cloudbees.com/job/logback-extensions/job/logback-extensions-OracleJDK7-SNAPSHOT/'><img src='https://logback.ci.cloudbees.com/buildStatus/icon?job=logback-extensions/logback-extensions-OracleJDK7-SNAPSHOT'></a></h1>
-<sup>v0.1.4</sup>
+# logback-extensions [![CircleCI branch](https://img.shields.io/circleci/project/qos-ch/logback-extensions/master.svg)](https://circleci.com/gh/https://circleci.com/gh/qos-ch/logback-extensions)
+<sup>v0.1.5</sup>
 
 https://github.com/qos-ch/logback-extensions/wiki
 
@@ -7,7 +7,7 @@ https://github.com/qos-ch/logback-extensions/wiki
 Run the following command to build:
 
 ```
-mvn clean install
+./gradlew clean assemble
 ```
 
 #### License
