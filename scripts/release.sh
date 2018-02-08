@@ -29,11 +29,11 @@ pass=${NEXUS_PASSWORD}
 [ -z "$user" ] && read -p "Nexus username: " user
 [ -z "$pass" ] && read -p "Nexus password: " -s pass
 
-bintray_user=${BINTRAY_USER}
-bintray_key=${BINTRAY_KEY}
-[ -z "$bintray_user" ] && read -p "Bintray username: " bintray_user
-[ -z "$bintray_key" ] && read -p "Bintray API key: " bintray_key
-echo ''
+#bintray_user=${BINTRAY_USER}
+#bintray_key=${BINTRAY_KEY}
+#[ -z "$bintray_user" ] && read -p "Bintray username: " bintray_user
+#[ -z "$bintray_key" ] && read -p "Bintray API key: " bintray_key
+#echo ''
 
 ./gradlew   -Prelease.useAutomaticVersion=true  \
             -Prelease.releaseVersion=${version} \
@@ -49,9 +49,9 @@ echo ''
             release                             \
             uploadArchives
 
-./gradlew   -PBINTRAY_USER=${BINTRAY_USER}      \
-            -PBINTRAY_KEY=${BINTRAY_KEY}        \
-            bintrayUpload
+#./gradlew   -PBINTRAY_USER=${BINTRAY_USER}      \
+#            -PBINTRAY_KEY=${BINTRAY_KEY}        \
+#            bintrayUpload
 
 # To deploy archives without git transactions (tagging, etc.),
 # replace the `release` task above with `assembleRelease`.
