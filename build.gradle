@@ -25,6 +25,7 @@ allprojects  {
 subprojects {
   apply plugin: 'java'
   apply from: "${rootProject.rootDir}/gradle/deploy.gradle"
+  apply from: "${rootProject.rootDir}/gradle/readme.gradle"
 
   sourceCompatibility = 1.6
   targetCompatibility = 1.6
