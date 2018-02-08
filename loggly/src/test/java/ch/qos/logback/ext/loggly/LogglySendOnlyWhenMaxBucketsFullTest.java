@@ -124,7 +124,7 @@ public class LogglySendOnlyWhenMaxBucketsFullTest {
     }
 
     @Override
-    protected void processLogEntries(InputStream in) throws IOException {
+    protected void processLogEntries(InputStream in) {
       super.processLogEntries(in);
       synchronized(appender) {
         notifyAll();

@@ -47,9 +47,13 @@ public class LogglyHttpAppenderIntegratedTest {
 
         LogglyBatchAppender<String> appender = new LogglyBatchAppender<String>() {
             @Override
-            protected void processLogEntries(InputStream in) throws IOException {
+            protected void processLogEntries(InputStream in) {
                 // super.processLogEntries(in);
-                IoUtils.copy(in, out);
+                try {
+                    IoUtils.copy(in, out);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         };
         appender.setInputKey("YOUR LOGGLY INPUT KEY");
