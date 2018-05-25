@@ -191,9 +191,6 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
         return proxyPort;
     }
 
-    public void setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
     public void setProxyPort(String proxyPort) {
         if(proxyPort == null || proxyPort.trim().isEmpty()) {
             // handle logback configuration default value like "<proxyPort>${logback.loggly.proxy.port:-}</proxyPort>"
