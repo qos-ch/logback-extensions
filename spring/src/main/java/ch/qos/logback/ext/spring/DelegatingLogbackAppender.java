@@ -149,6 +149,10 @@ public class DelegatingLogbackAppender extends UnsynchronizedAppenderBase<ILoggi
                         delegate = appender;
                     } else {
                         //Otherwise, if the ApplicationContext is not ready yet, cache this event and wait
+                                                
+                        // make sure MDC and other attributes are captured before deferring
+                        event.prepareForDeferredProcessing();
+                        
                         cache.put(event);
 
                         return;
