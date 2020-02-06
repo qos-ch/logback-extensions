@@ -35,6 +35,7 @@ import java.nio.charset.Charset;
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  */
 public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBase<E> {
+
     public static final String DEFAULT_ENDPOINT_PREFIX = "https://logs-01.loggly.com/";
     public static final String DEFAULT_LAYOUT_PATTERN = "%d{\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\",UTC} %-5level [%thread] %logger: %m%n";
     protected static final Charset UTF_8 = Charset.forName("UTF-8");
@@ -48,6 +49,7 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
     private String proxyHost;
     protected Proxy proxy;
     private int httpReadTimeoutInMillis = 1000;
+    private int httpMaxNumberOfRetries = 3;
 
     @Override
     public void start() {
@@ -90,7 +92,7 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
         int count;
         byte[] buf = new byte[512];
 
-        while((count = is.read(buf, 0, buf.length)) != -1) {
+        while ((count = is.read(buf, 0, buf.length)) != -1) {
             baos.write(buf, 0, count);
         }
         baos.flush();
@@ -135,14 +137,13 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
         return new StringBuilder(DEFAULT_ENDPOINT_PREFIX).append(getEndpointPrefix())
                 .append(inputKey).toString();
     }
-    
+
     /**
-     * Returns the URL path prefix for the Loggly endpoint to which the 
-     * implementing class will send log events. This path prefix varies
-     * for the different Loggly services. The final endpoint URL is built
-     * by concatenating the {@link #DEFAULT_ENDPOINT_PREFIX} with the
-     * endpoint prefix from {@link #getEndpointPrefix()} and the 
-     * {@link #inputKey}.
+     * Returns the URL path prefix for the Loggly endpoint to which the
+     * implementing class will send log events. This path prefix varies for the
+     * different Loggly services. The final endpoint URL is built by
+     * concatenating the {@link #DEFAULT_ENDPOINT_PREFIX} with the endpoint
+     * prefix from {@link #getEndpointPrefix()} and the {@link #inputKey}.
      *
      * @return the URL path prefix for the Loggly endpoint
      */
@@ -194,8 +195,9 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
     }
+
     public void setProxyPort(String proxyPort) {
-        if(proxyPort == null || proxyPort.trim().isEmpty()) {
+        if (proxyPort == null || proxyPort.trim().isEmpty()) {
             // handle logback configuration default value like "<proxyPort>${logback.loggly.proxy.port:-}</proxyPort>"
             proxyPort = "0";
         }
@@ -207,7 +209,7 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
     }
 
     public void setProxyHost(String proxyHost) {
-        if(proxyHost == null || proxyHost.trim().isEmpty()) {
+        if (proxyHost == null || proxyHost.trim().isEmpty()) {
             // handle logback configuration default value like "<proxyHost>${logback.loggly.proxy.host:-}</proxyHost>"
             proxyHost = null;
         }
@@ -220,5 +222,21 @@ public abstract class AbstractLogglyAppender<E> extends UnsynchronizedAppenderBa
 
     public void setHttpReadTimeoutInMillis(int httpReadTimeoutInMillis) {
         this.httpReadTimeoutInMillis = httpReadTimeoutInMillis;
+    }
+
+    public int getHttpMaxNumberOfRetries() {
+        return httpMaxNumberOfRetries;
+    }
+
+    public void setHttpMaxNumberOfRetries(int httpMaxNumberOfRetries) {
+        if (httpMaxNumberOfRetries <= 0) {
+            this.httpMaxNumberOfRetries = 0;
+        } else {
+            this.httpMaxNumberOfRetries = httpMaxNumberOfRetries;
+        }
+    }
+
+    protected boolean canRetry(int currentRetryCount) {
+        return currentRetryCount <= getHttpMaxNumberOfRetries();
     }
 }

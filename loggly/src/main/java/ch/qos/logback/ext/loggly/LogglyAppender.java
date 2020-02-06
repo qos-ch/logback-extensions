@@ -21,7 +21,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * An Appender that posts logging messages to <a href="http://www.loggly.com">Loggly</a>, a cloud logging service.
+ * An Appender that posts logging messages to
+ * <a href="http://www.loggly.com">Loggly</a>, a cloud logging service.
  *
  * @author Mårten Gustafson
  * @author Les Hazlewood
@@ -30,7 +31,7 @@ import java.net.URL;
 public class LogglyAppender<E> extends AbstractLogglyAppender<E> {
 
     public static final String ENDPOINT_URL_PATH = "inputs/";
-    
+
     public LogglyAppender() {
     }
 
@@ -41,28 +42,37 @@ public class LogglyAppender<E> extends AbstractLogglyAppender<E> {
     }
 
     private void postToLoggly(final String event) {
-        try {
-            assert endpointUrl != null;
-            URL endpoint = new URL(endpointUrl);
-            final HttpURLConnection connection;
-            if (proxy == null) {
-                connection = (HttpURLConnection) endpoint.openConnection();
-            } else {
-                connection = (HttpURLConnection) endpoint.openConnection(proxy);
+        int currentRetryCount = 0;
+        boolean success = false;
+        while (!success && canRetry(currentRetryCount)) {
+            try {
+                assert endpointUrl != null;
+                URL endpoint = new URL(endpointUrl);
+                final HttpURLConnection connection;
+                if (proxy == null) {
+                    connection = (HttpURLConnection) endpoint.openConnection();
+                } else {
+                    connection = (HttpURLConnection) endpoint.openConnection(proxy);
+                }
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+                connection.addRequestProperty("Content-Type", this.layout.getContentType());
+                connection.connect();
+                sendAndClose(event, connection.getOutputStream());
+                connection.disconnect();
+                final int responseCode = connection.getResponseCode();
+                if (responseCode == 200) {
+                    success = true;
+                } else if (!canRetry(currentRetryCount)) {
+                    final String message = readResponseBody(connection.getInputStream());
+                    addError("Loggly post failed (HTTP " + responseCode + ").  Response body:\n" + message);
+                } 
+            } catch (final IOException e) {
+                if (!canRetry(currentRetryCount)) {
+                    addError("IOException while attempting to communicate with Loggly", e);
+                }
             }
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
-            connection.addRequestProperty("Content-Type", this.layout.getContentType());
-            connection.connect();
-            sendAndClose(event, connection.getOutputStream());
-            connection.disconnect();
-            final int responseCode = connection.getResponseCode();
-            if (responseCode != 200) {
-                final String message = readResponseBody(connection.getInputStream());
-                addError("Loggly post failed (HTTP " + responseCode + ").  Response body:\n" + message);
-            }
-        } catch (final IOException e) {
-            addError("IOException while attempting to communicate with Loggly", e);
+            currentRetryCount++;
         }
     }
 
@@ -79,4 +89,3 @@ public class LogglyAppender<E> extends AbstractLogglyAppender<E> {
         return ENDPOINT_URL_PATH;
     }
 }
-
