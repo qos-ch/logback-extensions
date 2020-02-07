@@ -41,12 +41,17 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
 
 /**
  * <p>
- * <a href="http://logback.qos.ch/">Logback</a> batch appender for <a href="http://www.loggly.com/">Loggly</a> HTTP API</a>.
+ * <a href="http://logback.qos.ch/">Logback</a> batch appender for
+ * <a href="http://www.loggly.com/">Loggly</a> HTTP API</a>.
  * </p>
- * <p><strong>Note:</strong>Loggly's Syslog API is much more scalable than the HTTP API which should mostly be used in
- * low-volume or non-production systems. The HTTP API can be very convenient to workaround firewalls.</p>
- * <p>If the {@link LogglyBatchAppender} saturates and discards log messages, the following warning message is
- * appended to both Loggly and {@link System#err}: <br/>
+ * <p>
+ * <strong>Note:</strong>Loggly's Syslog API is much more scalable than the HTTP
+ * API which should mostly be used in low-volume or non-production systems. The
+ * HTTP API can be very convenient to workaround firewalls.</p>
+ * <p>
+ * If the {@link LogglyBatchAppender} saturates and discards log messages, the
+ * following warning message is appended to both Loggly and {@link System#err}:
+ * <br/>
  * "<code>$date - OutputStream is full, discard previous logs</code>"</p>
  * <h2>Configuration settings</h2>
  * <table>
@@ -58,13 +63,14 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <tr>
  * <td>inputKey</td>
  * <td>String</td>
- * <td>Loggly input key. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample
- * "<code>12345678-90ab-cdef-1234-567890abcdef</code>"</td>
+ * <td>Loggly input key. "<code>inputKey</code>" or <code>endpointUrl</code> is
+ * required. Sample "<code>12345678-90ab-cdef-1234-567890abcdef</code>"</td>
  * </tr>
  * <tr>
  * <td>endpointUrl</td>
  * <td>String</td>
- * <td>Loggly HTTP API endpoint URL. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample:
+ * <td>Loggly HTTP API endpoint URL. "<code>inputKey</code>" or
+ * <code>endpointUrl</code> is required. Sample:
  * "<code>https://logs.loggly.com/inputs/12345678-90ab-cdef-1234-567890abcdef</code>"</td>
  * </tr>
  * <tr>
@@ -76,42 +82,51 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <tr>
  * <td>proxyHost</td>
  * <td>String</td>
- * <td>hostname of a proxy server. If blank, no proxy is used (See {@link URL#openConnection(java.net.Proxy)}.</td>
+ * <td>hostname of a proxy server. If blank, no proxy is used (See
+ * {@link URL#openConnection(java.net.Proxy)}.</td>
  * </tr>
  * <tr>
  * <td>proxyPort</td>
  * <td>int</td>
- * <td>port of a proxy server. Must be a valid int but is ignored if <code>proxyHost</code> is blank or null.</td>
+ * <td>port of a proxy server. Must be a valid int but is ignored if
+ * <code>proxyHost</code> is blank or null.</td>
  * </tr>
  * <tr>
  * <td>jmxMonitoring</td>
  * <td>boolean</td>
  * <td>Enable registration of a monitoring MBean named
- * "<code>ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@#hashcode#</code>". Default: <code>true</code>.</td>
+ * "<code>ch.qos.logback:type=LogglyBatchAppender,name=LogglyBatchAppender@#hashcode#</code>".
+ * Default: <code>true</code>.</td>
  * </tr>
  * <tr>
  * <td>maxNumberOfBuckets</td>
  * <td>int</td>
- * <td>Max number of buckets of in the byte buffer. Default value: <code>8</code>.</td>
+ * <td>Max number of buckets of in the byte buffer. Default value:
+ * <code>8</code>.</td>
  * </tr>
  * <tr>
  * <td>maxBucketSizeInKilobytes</td>
  * <td>int</td>
- * <td>Max size of each bucket. Default value: <code>1024</code> Kilobytes (1MB).</td>
+ * <td>Max size of each bucket. Default value: <code>1024</code> Kilobytes
+ * (1MB).</td>
  * </tr>
  * <tr>
  * <td>flushIntervalInSeconds</td>
  * <td>int</td>
- * <td>Interval of the buffer flush to Loggly API. Default value: <code>3</code>.</td>
+ * <td>Interval of the buffer flush to Loggly API. Default value:
+ * <code>3</code>.</td>
  * </tr>
  * <tr>
  * <td>connReadTimeoutSeconds</td>
  * <td>int</td>
- * <td>How Long the HTTP Connection will wait on reads. Default value: <code>1</code> second.</td>
+ * <td>How Long the HTTP Connection will wait on reads. Default value:
+ * <code>1</code> second.</td>
  * </tr>
  * </table>
- * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each, which seems very reasonable even for small JVMs.
- * If logs are discarded, try first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or event "1s".
+ * Default configuration consumes up to 8 buffers of 1024 Kilobytes (1MB) each,
+ * which seems very reasonable even for small JVMs. If logs are discarded, try
+ * first to shorten the <code>flushIntervalInSeconds</code> parameter to "2s" or
+ * event "1s".
  * <p/>
  * <h2>Configuration Sample</h2>
  * <pre><code>
@@ -137,11 +152,13 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <h2>Implementation decisions</h2>
  * <ul>
  * <li>Why buffer the generated log messages as bytes instead of using the
- * {@code ch.qos.logback.core.read.CyclicBufferAppender} and buffering the {@code ch.qos.logback.classic.spi.ILoggingEvent} ?
- * Because it is much easier to control the size in memory</li>
+ * {@code ch.qos.logback.core.read.CyclicBufferAppender} and buffering the
+ * {@code ch.qos.logback.classic.spi.ILoggingEvent} ? Because it is much easier
+ * to control the size in memory</li>
  * <li>
- * Why buffer in a byte array instead of directly writing in a {@link BufferedOutputStream} on the {@link HttpURLConnection} ?
- * Because the Loggly API may not like such kind of streaming approach.
+ * Why buffer in a byte array instead of directly writing in a
+ * {@link BufferedOutputStream} on the {@link HttpURLConnection} ? Because the
+ * Loggly API may not like such kind of streaming approach.
  * </li>
  * </ul>
  *
@@ -150,7 +167,7 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
 public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements LogglyBatchAppenderMBean {
 
     public static final String ENDPOINT_URL_PATH = "bulk/";
-    
+
     private boolean debug = false;
 
     private int flushIntervalInSeconds = 3;
@@ -192,7 +209,7 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
         // Issue #21: Make sure messages end with new-line to delimit
         // individual log events within the batch sent to loggly.
         if (!msg.endsWith("\n")) {
-          msg += "\n";
+            msg += "\n";
         }
 
         try {
@@ -336,44 +353,65 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
 
     /**
      * Send log entries to Loggly
+     *
      * @param in log input stream
      */
     protected void processLogEntries(InputStream in) {
         long nanosBefore = System.nanoTime();
+        int currentRetryCount = 0;
+        boolean success = false;
         try {
+            while (!success && canRetry(currentRetryCount)) {
+                try {
+                    HttpURLConnection conn = getHttpConnection(new URL(endpointUrl));
+                    /* Set connection Read Timeout */
+                    conn.setReadTimeout(connReadTimeoutSeconds * 1000);
+                    BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());
 
-            HttpURLConnection conn = getHttpConnection(new URL(endpointUrl));
-            /* Set connection Read Timeout */
-            conn.setReadTimeout(connReadTimeoutSeconds*1000);
-            BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());
+                    //If we are retrying the request, the input stream needs to be reset in order to be read again
+                    if (currentRetryCount > 0) {
+                        in.reset();
+                    } 
+                    
+                    long len = IoUtils.copy(in, out);
+                    sentBytes.addAndGet(len);
+                    
+                    out.flush();
+                    out.close();
 
-            long len = IoUtils.copy(in, out);
-            sentBytes.addAndGet(len);
-
-            out.flush();
-            out.close();
-
-            int responseCode = conn.getResponseCode();
-            String response = super.readResponseBody(conn.getInputStream());
-            switch (responseCode) {
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_ACCEPTED:
-                    sendSuccessCount.incrementAndGet();
-                    break;
-                default:
-                    sendExceptionCount.incrementAndGet();
-                    addError("LogglyAppender server-side exception: " + responseCode + ": " + response);
+                    int responseCode = conn.getResponseCode();
+                    String response = super.readResponseBody(conn.getInputStream());
+                    switch (responseCode) {
+                        case HttpURLConnection.HTTP_OK:
+                        case HttpURLConnection.HTTP_ACCEPTED:
+                            success = true;
+                            sendSuccessCount.incrementAndGet();
+                            break;
+                        default:
+                            if (!canRetry(currentRetryCount)) {
+                                sendExceptionCount.incrementAndGet();
+                                addError("LogglyAppender server-side exception: " + responseCode + ": " + response);
+                            } else if (isDebug()) {
+                                addWarn("LogglyAppender server-side exception - Retrying...: " + responseCode + ": " + response);
+                            }
+                    }
+                    // force url connection recycling
+                    try {
+                        conn.getInputStream().close();
+                        conn.disconnect();
+                    } catch (Exception e) {
+                        // swallow exception
+                    }
+                } catch (Exception e) {
+                    if (!canRetry(currentRetryCount)) {
+                        sendExceptionCount.incrementAndGet();
+                        addError("LogglyAppender client-side exception", e);
+                    } else if (isDebug()) {
+                        addWarn("LogglyAppender client-side exception - Retrying...", e);
+                    }
+                }
+                currentRetryCount++;
             }
-            // force url connection recycling
-            try {
-                conn.getInputStream().close();
-                conn.disconnect();
-            } catch (Exception e) {
-                // swallow exception
-            }
-        } catch (Exception e) {
-            sendExceptionCount.incrementAndGet();
-            addError("LogglyAppender client-side exception", e);
         } finally {
             sendDurationInNanos.addAndGet(System.nanoTime() - nanosBefore);
         }
@@ -449,17 +487,18 @@ public class LogglyBatchAppender<E> extends AbstractLogglyAppender<E> implements
     }
 
     private String getDebugInfo() {
-        return "{" +
-                "sendDurationInMillis=" + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS) +
-                ", sendSuccessCount=" + sendSuccessCount +
-                ", sendExceptionCount=" + sendExceptionCount +
-                ", sentBytes=" + sentBytes +
-                ", discardedBucketsCount=" + getDiscardedBucketsCount() +
-                ", currentLogEntriesBufferSizeInBytes=" + getCurrentLogEntriesBufferSizeInBytes() +
-                '}';
+        return "{"
+                + "sendDurationInMillis=" + TimeUnit.MILLISECONDS.convert(sendDurationInNanos.get(), TimeUnit.NANOSECONDS)
+                + ", sendSuccessCount=" + sendSuccessCount
+                + ", sendExceptionCount=" + sendExceptionCount
+                + ", sentBytes=" + sentBytes
+                + ", discardedBucketsCount=" + getDiscardedBucketsCount()
+                + ", currentLogEntriesBufferSizeInBytes=" + getCurrentLogEntriesBufferSizeInBytes()
+                + '}';
     }
 
     public class LogglyExporter implements Runnable {
+
         @Override
         public void run() {
             try {
