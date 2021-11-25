@@ -65,7 +65,7 @@ import ch.qos.logback.ext.loggly.io.IoUtils;
  * <td>endpointUrl</td>
  * <td>String</td>
  * <td>Loggly HTTP API endpoint URL. "<code>inputKey</code>" or <code>endpointUrl</code> is required. Sample:
- * "<code>https://logs.loggly.com/inputs/12345678-90ab-cdef-1234-567890abcdef</code>"</td>
+ * "<code>https://logs.loggly.com/bulk/12345678-90ab-cdef-1234-567890abcdef</code>"</td>
  * </tr>
  * <tr>
  * <td>pattern</td>
