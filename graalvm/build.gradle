@@ -1,0 +1,6 @@
+
+description = POM_DESCRIPTION
+dependencies {
+    compileOnly 'ch.qos.logback:logback-classic:1.2.3'
+    compileOnly 'org.graalvm.sdk:graal-sdk:22.3.0'
+}
